@@ -13,8 +13,17 @@ class UserStateViewModel: ObservableObject {
     @Published var isLoggedIn = false
     @Published var currentError: Error?
     @Published var isLoading: Bool = false
+    @Published var refreshTokenExpireAlert: Bool = false
     
     let repository: AuthorizationRepository = DefaultAuthRepository(dataTransferService: DataTransferService(networkService: DefaultNetworkService(config: APINetworkConfigs.authoTestConfig), defaultResponseHandler: CommonResponseErrorHandler()))
+    
+    init() {
+        let _ = NotificationCenter.default.publisher(for: .init("expirationRefreshToken"))
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+            self?.refreshTokenExpireAlert = true
+        }
+    }
     
     func signIn(email: String, password: String) {
         isLoading = true
@@ -25,6 +34,7 @@ class UserStateViewModel: ObservableObject {
                     self?.isLoading = false
                     self?.isLoggedIn = true
                 }
+                
             case .failure(let failure):
                 DispatchQueue.main.async {
                     self?.isLoading = false
