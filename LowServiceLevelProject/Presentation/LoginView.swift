@@ -15,36 +15,30 @@ struct LoginView: View {
     @State private var presentRegisterView: Bool = false
     
     var body: some View {
+        NavigationStack {
             VStack(alignment: .center, spacing: 20) {
-                TextField(text: $id, prompt: Text("아이디")) {
-                    
-                }
-                .padding(10)
-                .focusHightLight()
-                .focused($isFocus)
-                
-                SecureField(text: $password, prompt: Text("비밀번호")) {}
-                    .padding(10)
+                    TextField("이메일", text: $id, prompt: Text("이메일"))
                     .focusHightLight()
                     .focused($isFocus)
-                Button("로그인") {}
-                Button("회원가입") {
-                    presentRegisterView = true
-                }
-            }
-            .fullScreenCover(isPresented: $presentRegisterView, content: {
-                RegisterView()
-            })
-            .onAppear()
-            .frame(width: 250)
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button("Done") {
-                        isFocus = false
+                    
+                    SecureField("비밀번호", text: $password, prompt: Text("비밀번호"))
+                        .focusHightLight()
+                        .focused($isFocus)
+                    Button("로그인") {}
+                    NavigationLink("회원가입") {
+                        RegisterView()
                     }
                 }
+                .frame(width: 250)
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+                        Button("Done") {
+                            isFocus = false
+                        }
+                    }
             }
+        }
     }
 }
 

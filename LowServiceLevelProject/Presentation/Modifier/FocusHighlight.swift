@@ -14,6 +14,7 @@ struct FocusHighlightModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
+            .padding(10)
             .focused($isFocus, equals: true)
             .overlay(RoundedRectangle(cornerRadius: 10.0).strokeBorder(isFocus ? .black : .gray , style: StrokeStyle(lineWidth: 1.0)))
     }
