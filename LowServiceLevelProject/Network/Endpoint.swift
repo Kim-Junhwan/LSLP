@@ -73,7 +73,7 @@ struct EndPoint<T>: Networable {
     var headerParameter: [String: String]
     var bodyParameter: Encodable?
     
-    init(path: String, method: HTTPMethodType, query: Encodable?, header: [String: String] = [:], bodyParameter: Encodable?) {
+    init(path: String, method: HTTPMethodType, query: Encodable? = nil, header: [String: String] = [:], bodyParameter: Encodable? = nil) {
         self.path = path
         self.method = method
         self.queryParameter = query
