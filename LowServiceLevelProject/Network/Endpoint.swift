@@ -63,7 +63,7 @@ extension Encodable {
 
 protocol Networable: Requestable, Responsable {}
 
-struct EndPoint<T>: Networable {
+struct EndPoint<T>: Networable where T: Decodable {
     
     typealias responseType = T
     
