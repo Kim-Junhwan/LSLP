@@ -40,7 +40,7 @@ extension Requestable {
         let url = try self.makeURL(networkConfig: networkConfig)
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
-        request.allHTTPHeaderFields = networkConfig.header
+        request.allHTTPHeaderFields = networkConfig.header.merging(headerParameter, uniquingKeysWith: { $1 })
         if let bodyParameter {
             let body = try? JSONEncoder().encode(bodyParameter)
             request.httpBody = body
