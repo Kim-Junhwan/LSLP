@@ -22,6 +22,6 @@ final class RegisterViewModel: ObservableObject {
 //    }
     
     func register() {
-        repository.register(registerInfo: .init(email: email, password: password, nickName: nick, phoneNumber: phone, birthDay: birthDay))
+        repository.register(request: .init(email: email, password: password, nick: nick, phoneNumber: phone, birthDay: birthDay))
     }
 }
