@@ -8,5 +8,5 @@
 import Foundation
 
 protocol RegisterUseCase {
-    func excute(_ registerInfo: RegisterUserInfomation)
+    func excute(_ registerInfo: RegisterRequestDTO)
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 protocol AuthorizationRepository {
-    func register(request: RegisterRequest)
+    func register(request: RegisterRequestDTO)
     func validateEmail(request: ValidateEmailRequest)
     func login(request: LoginRequest)
 }

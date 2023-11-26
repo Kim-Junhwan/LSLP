@@ -17,8 +17,8 @@ final class DefaultAuthRepository {
 
 extension DefaultAuthRepository: AuthorizationRepository {
     
-    func register(request: RegisterRequest) {
-        let request = RegisterRequest(email: request.email, password: request.password, nick: request.nick, phoneNumber: request.phoneNumber, birthDay: request.birthDay?.description)
+    func register(request: RegisterRequestDTO) {
+        let request = RegisterRequestDTO(email: request.email, password: request.password, nick: request.nick, phoneNumber: request.phoneNumber, birthDay: request.birthDay?.description)
         dataTransferService.request(endpoint: LSLPAPIEndpoints.registerService(request: request)) { result in
             switch result {
             case .success(let success):
@@ -33,7 +33,10 @@ extension DefaultAuthRepository: AuthorizationRepository {
     }
     
     func validateEmail(request: ValidateEmailRequest) {
-        <#code#>
+        let endpoint = ValidateEmailRequestDTO(email: request.email)
+        dataTransferService.request(endpoint: LSLPAPIEndpoints.validateEmail(request: endpoint)) { result in
+            
+        }
     }
     
     func login(request: LoginRequest) {
