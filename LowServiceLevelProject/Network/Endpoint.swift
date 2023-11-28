@@ -29,9 +29,11 @@ extension Requestable {
         guard var urlComponents = URLComponents(string: endpoint) else { throw NetworkError.url }
         var queryItems: [URLQueryItem] = []
         queryItems += networkConfig.queryParameter.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
-        let query = try queryParameter?.toQuery() ?? [:]
-        queryItems += query.map { URLQueryItem(name: $0.key, value: String(describing: $0.value)) }
-        urlComponents.queryItems = queryItems
+        if let queryParameter {
+            let query = try queryParameter.toQuery() ?? [:]
+            queryItems += query.map { URLQueryItem(name: $0.key, value: String(describing: $0.value)) }
+            urlComponents.queryItems = queryItems
+        }
         guard let url = urlComponents.url else { throw NetworkError.url }
         return url
     }
@@ -51,6 +53,7 @@ extension Requestable {
 
 protocol Responsable {
     associatedtype responseType
+    associatedtype errorHandler
 }
 
 extension Encodable {
@@ -63,8 +66,8 @@ extension Encodable {
 
 protocol Networable: Requestable, Responsable {}
 
-struct EndPoint<T>: Networable where T: Decodable {
-    
+struct EndPoint<T, U>: Networable where T: Decodable, U: ResponseErrorHandler {
+    typealias errorHandler = U
     typealias responseType = T
     
     let path: String
