@@ -8,7 +8,11 @@
 import Foundation
 
 enum LSLPAPIEndpoints {
-    static func registerService(request: RegisterRequest) -> EndPoint<RegisterResponse> {
+    static func registerService(request: RegisterRequestDTO) -> EndPoint<EmptyResponse, AuthorizationCommonErrorHandler> {
         return EndPoint(path: "join", method: .POST, header: ["Content-Type":"application/json"], bodyParameter: request)
+    }
+    
+    static func validateEmail(request: ValidateEmailRequestDTO) -> EndPoint<EmptyResponse, AuthorizationCommonErrorHandler> {
+        return EndPoint(path: "validation/email", method: .POST, header: ["Content-Type":"application/json"], bodyParameter: request)
     }
 }
