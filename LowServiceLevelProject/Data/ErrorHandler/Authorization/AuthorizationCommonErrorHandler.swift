@@ -7,18 +7,22 @@
 
 import Foundation
 
-enum AuthorizationCommonErrorHandler: Int, ResponseErrorHandler {
+struct AuthorizationCommonErrorHandler: ResponseErrorHandler {
     
-    case missRequireValue = 400
-    
-    func mappingStatusCode(statusCode: Int) -> AuthorizationCommonErrorHandler? {
-        return .init(rawValue: statusCode)
-    }
-    
-    var errorDescription: String? {
-        switch self {
-        case .missRequireValue:
-            return "필수값이 누락되었습니다."
+    enum ResponseErrorType: Int, ResponseError {
+        
+        case emptyRequireValue = 400
+        
+        func retry(endpoint: some Networable, completion: @escaping (RetryResult) -> Void) {
+            switch self {
+            case .emptyRequireValue:
+                completion(.notRetry(error: self))
+            }
         }
     }
+    
+    func mappingStatusCode(statusCode: Int) -> ResponseError? {
+        return ResponseErrorType(rawValue: statusCode)
+    }
+   
 }

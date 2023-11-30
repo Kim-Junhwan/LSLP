@@ -7,33 +7,20 @@
 
 import Foundation
 
-enum CommonResponseErrorHandler: Int, ResponseErrorHandler {
+struct CommonResponseErrorHandler: ResponseErrorHandler {
     
-    case secretKeyError = 420
-    case tooMuchCall = 429
-    case pathError = 444
-    case serverError = 500
-    
-    func errorHandling(endPoint: Requestable, networkService: NetworkService, completion: @escaping (Result<Data, NetworkError>) -> Void) {
-        switch self {
-        case .secretKeyError:
-            print("secretKeyError")
-        case .tooMuchCall:
-            print("tooMuchCall")
-        case .pathError:
-            print("pathError")
-        case .serverError:
-            print("serverError")
+    enum ResponseErrorType: Int, ResponseError {
+        case secretKeyError = 420
+        case tooMuchCall = 429
+        case pathError = 444
+        case serverError = 500
+        
+        func retry(endpoint: some Networable, completion: @escaping (RetryResult) -> Void) {
+            completion(.notRetry(error: self))
         }
     }
     
-    func mappingStatusCode(statusCode: Int) -> CommonResponseErrorHandler? {
-        return .init(rawValue: statusCode)
+    func mappingStatusCode(statusCode: Int) -> ResponseError? {
+        return ResponseErrorType(rawValue: statusCode)
     }
-    
-    func retry(completion: @escaping (Result<Data, NetworkError>) -> Void) {
-        
-    }
-    
-    
 }
