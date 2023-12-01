@@ -11,6 +11,7 @@ enum DataTransferServiceError: Error {
     case parsing(error: Error)
     case noData
     case networkError(error: NetworkError)
+    case unknownStatusCode(statusCode: Int)
 }
 
 
@@ -45,16 +46,20 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
             case .failure(let failure):
                 switch failure {
                 case .responseError(statusCode: let statusCode, data: _):
-                    if count >= maxCount {
-                        completion(.failure(failure))
+                    let responseError: ResponseError?
+                    if let defaultError = self.defaultResponseErrorHandler.mappingStatusCode(statusCode: statusCode) {
+                        responseError = defaultError
                     } else {
-                        if let defaultStatus = self.defaultResponseErrorHandler.mappingStatusCode(statusCode: statusCode) {
-                            defaultStatus.retry(endpoint: endpoint, completion: responseClosure)
-                            return
-                        } else {
-                            endpointResponseHandler?.mappingStatusCode(statusCode: statusCode)?.retry(endpoint: endpoint, completion: responseClosure)
-                        }
+                        responseError = endpointResponseHandler?.mappingStatusCode(statusCode: statusCode)
                     }
+                    guard let responseError else { 
+                        completion(.failure(DataTransferServiceError.unknownStatusCode(statusCode: statusCode)))
+                        return
+                    }
+                    if count >= maxCount {
+                        completion(.failure(responseError))
+                    }
+                    responseError.retry(endpoint: endpoint, completion: responseClosure)
                 case .networkError(error: _), .url:
                     completion(.failure(failure))
                 }
