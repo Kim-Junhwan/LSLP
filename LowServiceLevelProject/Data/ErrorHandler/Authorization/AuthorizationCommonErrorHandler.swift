@@ -13,7 +13,7 @@ struct AuthorizationCommonErrorHandler: ResponseErrorHandler {
         
         case emptyRequireValue = 400
         
-        func retry(endpoint: some Networable, completion: @escaping (RetryResult) -> Void) {
+        func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
             switch self {
             case .emptyRequireValue:
                 completion(.notRetry(error: self))

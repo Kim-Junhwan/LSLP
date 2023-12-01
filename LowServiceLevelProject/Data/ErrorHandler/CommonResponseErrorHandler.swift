@@ -15,7 +15,7 @@ struct CommonResponseErrorHandler: ResponseErrorHandler {
         case pathError = 444
         case serverError = 500
         
-        func retry(endpoint: some Networable, completion: @escaping (RetryResult) -> Void) {
+        func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
             completion(.notRetry(error: self))
         }
     }

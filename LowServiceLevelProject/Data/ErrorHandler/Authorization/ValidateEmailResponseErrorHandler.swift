@@ -12,7 +12,7 @@ struct ValidateEmailResponseErrorHandler: ResponseErrorHandler {
     enum ResponseErrorType: Int, ResponseError, LocalizedError {
         case notValidEmail = 409
         
-        func retry(endpoint: some Networable, completion: @escaping (RetryResult) -> Void) {
+        func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
             completion(.notRetry(error: self))
         }
         
