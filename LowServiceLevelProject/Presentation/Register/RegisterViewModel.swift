@@ -15,13 +15,12 @@ final class RegisterViewModel: ObservableObject {
     @Published var phone: String = ""
     @Published var birthDay: Date = Date()
     @Published var isLoading: Bool = false
-    var errorDescription: String = ""
     
     var emailEmpty: Bool {
         return email.isEmpty
     }
     
-    let repository: AuthorizationRepository = DefaultAuthRepository(dataTransferService: DataTransferService(networkService: DefaultNetworkService(config: APINetworkConfigs.registerConfig)))
+    let repository: AuthorizationRepository = DefaultAuthRepository(dataTransferService: DataTransferService(networkService: DefaultNetworkService(config: APINetworkConfigs.registerConfig), defaultResponseHandler: CommonResponseErrorHandler()))
     
 //    init(repository: AuthorizationRepository) {
 //        self.repository = repository
@@ -34,7 +33,6 @@ final class RegisterViewModel: ObservableObject {
             case .success(_):
                 completion(nil)
             case .failure(let failure):
-                self.errorDescription = failure.localizedDescription
                 completion(failure)
             }
             self.changeLoadingValue(false)
@@ -48,7 +46,6 @@ final class RegisterViewModel: ObservableObject {
             case .success(_):
                 completion(nil)
             case .failure(let failure):
-                self.errorDescription = failure.localizedDescription
                 completion(failure)
             }
             self.changeLoadingValue(false)

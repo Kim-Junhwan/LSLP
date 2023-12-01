@@ -9,11 +9,35 @@ import SwiftUI
 
 struct RegisterView: View {
     
+    enum CurrentAlert {
+        case validateEmail
+        case register
+        
+        var title: String {
+            switch self {
+            case .validateEmail:
+                return "사용 가능한 이메일"
+            case .register:
+                return "가입 완료"
+            }
+        }
+        
+        var errorTitle: String {
+            switch self {
+            case .validateEmail:
+                return "사용이 불가능한 이메일입니다"
+            case .register:
+                return "회원가입 실패"
+            }
+        }
+    }
+    
     @StateObject var viewModel = RegisterViewModel()
-    @State private var showSheet = false
     @State private var showErrorAlert = false
     @State private var showAlert = false
     
+    @State private var currentAlert: CurrentAlert = .register
+    @State private var currentError: Error?
     
     var body: some View {
         NavigationStack {
@@ -23,8 +47,10 @@ struct RegisterView: View {
                         TextField("이메일", text: $viewModel.email, prompt: Text("이메일"))
                             .focusHightLight()
                         Button("중복 확인") {
+                            currentAlert = .validateEmail
                             viewModel.validateEmail { error in
                                 if error != nil {
+                                    self.currentError = error
                                     showErrorAlert = true
                                     return
                                 }
@@ -32,13 +58,14 @@ struct RegisterView: View {
                             }
                         }
                         .disabled(viewModel.emailEmpty)
-                        .alert("에러", isPresented: $showErrorAlert) {
+                        .alert(currentAlert.errorTitle, isPresented: $showErrorAlert) {
                             Button("확인"){}
                         } message: {
-                            Text(viewModel.errorDescription)
+                            Text(currentError?.localizedDescription ?? "")
                         }
-                        .alert("사용가능한 이메일", isPresented: $showAlert) {
+                        .alert(currentAlert.title, isPresented: $showAlert) {
                             Button("확인"){}
+                        } message: {
                         }
                     }
                     TextField("비밀번호", text: $viewModel.password, prompt: Text("비밀번호"))
@@ -53,7 +80,15 @@ struct RegisterView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("회원가입") {
-                            //viewModel.register()
+                            currentAlert = .register
+                            viewModel.register { error in
+                                if error != nil {
+                                    self.currentError = error
+                                    showErrorAlert = true
+                                    return
+                                }
+                                showAlert = true
+                            }
                         }
                     }
                 }
