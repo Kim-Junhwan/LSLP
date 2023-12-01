@@ -9,11 +9,11 @@ import Foundation
 
 enum RetryResult {
     case notRetry(error: Error)
-    case retry(endpoint: EndPoint<<#T: Decodable#>>)
+    case retry(endpoint: Requestable, maxCount: Int)
 }
 
 protocol ResponseError: Error {
-    func retry(endpoint: some Networable, completion: @escaping(RetryResult) -> Void)
+    func retry(endpoint: Requestable, completion: @escaping(RetryResult) -> Void)
 }
 
 protocol ResponseErrorHandler {
