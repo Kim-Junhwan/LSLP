@@ -9,7 +9,8 @@ import Foundation
 
 struct ValidateEmailResponseErrorHandler: ResponseErrorHandler {
     
-    enum ResponseErrorType: Int, ResponseError, LocalizedError {
+    enum ResponseErrorType: Int, ResponseError {
+        
         case notValidEmail = 409
         
         func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
