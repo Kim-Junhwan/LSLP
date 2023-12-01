@@ -53,7 +53,6 @@ extension Requestable {
 
 protocol Responsable {
     associatedtype responseType
-    associatedtype errorHandler
 }
 
 extension Encodable {
@@ -66,8 +65,8 @@ extension Encodable {
 
 protocol Networable: Requestable, Responsable {}
 
-struct EndPoint<T, U>: Networable where T: Decodable, U: ResponseErrorHandler {
-    typealias errorHandler = U
+struct EndPoint<T>: Networable where T: Decodable{
+    
     typealias responseType = T
     
     let path: String
@@ -76,7 +75,13 @@ struct EndPoint<T, U>: Networable where T: Decodable, U: ResponseErrorHandler {
     var headerParameter: [String: String]
     var bodyParameter: Encodable?
     
-    init(path: String, method: HTTPMethodType, query: Encodable? = nil, header: [String: String] = [:], bodyParameter: Encodable? = nil) {
+    init(
+        path: String,
+        method: HTTPMethodType,
+        query: Encodable? = nil,
+        header: [String: String] = [:],
+        bodyParameter: Encodable? = nil
+    ) {
         self.path = path
         self.method = method
         self.queryParameter = query
