@@ -8,9 +8,9 @@
 import Foundation
 
 final class DefaultAuthRepository {
-    private let dataTransferService: DataTransferService
+    private let dataTransferService: DataTransferService<CommonResponseErrorHandler>
     
-    init(dataTransferService: DataTransferService) {
+    init(dataTransferService: DataTransferService<CommonResponseErrorHandler>) {
         self.dataTransferService = dataTransferService
     }
 }
@@ -19,7 +19,7 @@ extension DefaultAuthRepository: AuthorizationRepository {
     
     func register(request: RegisterRequestDTO, completion: @escaping (Result<EmptyResponse, Error>) -> Void ) {
         let request = RegisterRequestDTO(email: request.email, password: request.password, nick: request.nick, phoneNumber: request.phoneNumber, birthDay: request.birthDay?.description)
-        dataTransferService.request(endpoint: LSLPAPIEndpoints.registerService(request: request)) { result in
+        dataTransferService.request(endpoint: LSLPAPIEndpoints.registerService(request: request), endpointResponseHandler: AuthorizationCommonErrorHandler()) { result in
             switch result {
             case .success(let success):
                 completion(.success(success))
@@ -31,7 +31,7 @@ extension DefaultAuthRepository: AuthorizationRepository {
     
     func validateEmail(request: ValidateEmailRequest, completion: @escaping (Result<EmptyResponse, Error>) -> Void) {
         let endpoint = ValidateEmailRequestDTO(email: request.email)
-        dataTransferService.request(endpoint: LSLPAPIEndpoints.validateEmail(request: endpoint)) { result in
+        dataTransferService.request(endpoint: LSLPAPIEndpoints.validateEmail(request: endpoint), endpointResponseHandler: ValidateEmailResponseErrorHandler()) { result in
             switch result {
             case .success(let success):
                 completion(.success(success))
