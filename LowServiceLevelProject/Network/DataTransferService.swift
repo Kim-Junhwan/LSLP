@@ -93,7 +93,9 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
                     } else {
                         endpointResponseHandler?.mappingStatusCode(statusCode: statusCode)?.retry(endpoint: endpoint, completion: responseResultClosure)
                     }
-                case .networkError(error: _), .url:
+                case .networkError(let netwokError):
+                    completion(.failure(netwokError))
+                case .url:
                     completion(.failure(error))
                 }
             }
