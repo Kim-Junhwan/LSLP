@@ -19,7 +19,7 @@ extension DefaultAuthRepository: AuthorizationRepository {
     
     func register(request: RegisterRequestDTO, completion: @escaping (Result<EmptyResponse, Error>) -> Void ) {
         let request = RegisterRequestDTO(email: request.email, password: request.password, nick: request.nick, phoneNumber: request.phoneNumber, birthDay: request.birthDay?.description)
-        dataTransferService.request(endpoint: LSLPAPIEndpoints.registerService(request: request), endpointResponseHandler: AuthorizationCommonErrorHandler()) { result in
+        dataTransferService.request(endpoint: LSLPAPIEndpoints.registerService(request: request), endpointResponseHandler: RegisterResponseErrorHandler()) { result in
             switch result {
             case .success(let success):
                 completion(.success(success))
