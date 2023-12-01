@@ -58,6 +58,7 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
                     }
                     if count >= maxCount {
                         completion(.failure(responseError))
+                        return
                     }
                     responseError.retry(endpoint: endpoint, completion: responseClosure)
                 case .networkError(error: _), .url:
