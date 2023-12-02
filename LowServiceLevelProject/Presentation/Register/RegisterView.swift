@@ -32,12 +32,14 @@ struct RegisterView: View {
         }
     }
     
+    @Environment(\.dismiss) private var dismiss
     @StateObject var viewModel = RegisterViewModel()
     @State private var showErrorAlert = false
     @State private var showAlert = false
     
     @State private var currentAlert: CurrentAlert = .register
     @State private var currentError: Error?
+    @State private var isRegister: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -64,7 +66,11 @@ struct RegisterView: View {
                             Text(currentError?.localizedDescription ?? "")
                         }
                         .alert(currentAlert.title, isPresented: $showAlert) {
-                            Button("확인"){}
+                            Button("확인"){
+                                if isRegister {
+                                    dismiss()
+                                }
+                            }
                         } message: {
                         }
                     }
@@ -87,6 +93,7 @@ struct RegisterView: View {
                                     showErrorAlert = true
                                     return
                                 }
+                                isRegister = true
                                 showAlert = true
                             }
                         }
