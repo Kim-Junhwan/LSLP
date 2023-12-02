@@ -10,5 +10,5 @@ import Foundation
 protocol AuthorizationRepository {
     func register(request: RegisterRequestDTO, completion: @escaping(Result<EmptyResponse,Error>) -> Void)
     func validateEmail(request: ValidateEmailRequest, completion: @escaping(Result<EmptyResponse,Error>) -> Void)
-    func login(request: LoginRequest)
+    func login(request: LoginRequest, completion: @escaping (Result<LoginResponse, Error>) -> Void)
 }

@@ -44,7 +44,7 @@ extension Requestable {
         request.httpMethod = method.rawValue
         request.allHTTPHeaderFields = networkConfig.header.merging(headerParameter, uniquingKeysWith: { $1 })
         if let bodyParameter {
-            let body = try? JSONEncoder().encode(bodyParameter)
+            let body = try JSONEncoder().encode(bodyParameter)
             request.httpBody = body
         }
         return request

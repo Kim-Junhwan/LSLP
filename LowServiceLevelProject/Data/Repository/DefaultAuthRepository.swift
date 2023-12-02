@@ -41,7 +41,15 @@ extension DefaultAuthRepository: AuthorizationRepository {
         }
     }
     
-    func login(request: LoginRequest) {
-        
+    func login(request: LoginRequest, completion: @escaping (Result<LoginResponse, Error>) -> Void) {
+        let endpoint = LoginRequestDTO(email: request.email, password: request.password)
+        dataTransferService.request(endpoint: LSLPAPIEndpoints.login(request: endpoint), endpointResponseHandler: LoginResponseErrorHandler()) { result in
+            switch result {
+            case .success(let success):
+                completion(.success(success))
+            case .failure(let failure):
+                completion(.failure(failure))
+            }
+        }
     }
 }

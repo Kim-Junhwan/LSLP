@@ -9,4 +9,5 @@ import Foundation
 
 enum APINetworkConfigs {
     static let registerConfig = NetworkConfiguration(baseURL: URL(string: APIKey.baseURL)!, header: ["SesacKey":APIKey.secretKey], queryParameter: [:])
+    static let authoTestConfig = NetworkConfiguration(baseURL: URL(string: APIKey.authTestURL)!, header: ["SesacKey":APIKey.secretKey], queryParameter: [:])
 }

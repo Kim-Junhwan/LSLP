@@ -16,4 +16,8 @@ enum LSLPAPIEndpoints {
     static func validateEmail(request: ValidateEmailRequestDTO) -> EndPoint<EmptyResponse> {
         return EndPoint(path: "validation/email", method: .POST, header: ["Content-Type":"application/json"], bodyParameter: request)
     }
+    
+    static func login(request: LoginRequestDTO) -> EndPoint<LoginResponse> {
+        return EndPoint(path: "login", method: .POST, header: ["Content-Type":"application/json"], bodyParameter: request)
+    }
 }
