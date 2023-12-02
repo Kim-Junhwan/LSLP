@@ -9,22 +9,23 @@ import SwiftUI
 
 struct LoginView: View {
     
-    @State private var id: String = ""
-    @State private var password: String = ""
+    @StateObject private var viewModel = LoginViewModel()
     @FocusState private var isFocus: Bool
     @State private var presentRegisterView: Bool = false
     
     var body: some View {
         NavigationStack {
             VStack(alignment: .center, spacing: 20) {
-                    TextField("이메일", text: $id, prompt: Text("이메일"))
+                TextField("이메일", text: $viewModel.id, prompt: Text("이메일"))
                     .focusHightLight()
                     .focused($isFocus)
                     
-                    SecureField("비밀번호", text: $password, prompt: Text("비밀번호"))
+                SecureField("비밀번호", text: $viewModel.password, prompt: Text("비밀번호"))
                         .focusHightLight()
                         .focused($isFocus)
-                    Button("로그인") {}
+                    Button("로그인") {
+                        viewModel.login()
+                    }
                     NavigationLink("회원가입") {
                         RegisterView()
                     }
