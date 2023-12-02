@@ -12,12 +12,12 @@ enum RetryResult {
     case retry(endpoint: Requestable, maxCount: Int)
 }
 
-protocol ResponseError: Error, LocalizedError {
+protocol ResponseErrorType: Error, LocalizedError {
     func retry(endpoint: Requestable, completion: @escaping(RetryResult) -> Void)
 }
 
 protocol ResponseErrorHandler {
-    associatedtype ResponseErrorType: ResponseError
+    associatedtype ResponseError: ResponseErrorType
     
-    func mappingStatusCode(statusCode: Int) -> ResponseError?
+    func mappingStatusCode(statusCode: Int) -> ResponseErrorType?
 }

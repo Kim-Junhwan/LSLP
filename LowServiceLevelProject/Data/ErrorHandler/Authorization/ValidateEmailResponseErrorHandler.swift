@@ -9,7 +9,7 @@ import Foundation
 
 struct ValidateEmailResponseErrorHandler: ResponseErrorHandler {
     
-    enum ResponseErrorType: Int, ResponseError {
+    enum ResponseError: Int, ResponseErrorType {
         
         case notValidEmail = 409
         
@@ -25,11 +25,11 @@ struct ValidateEmailResponseErrorHandler: ResponseErrorHandler {
         }
     }
     
-    func mappingStatusCode(statusCode: Int) -> ResponseError? {
+    func mappingStatusCode(statusCode: Int) -> ResponseErrorType? {
         if let response = AuthorizationCommonErrorHandler().mappingStatusCode(statusCode: statusCode) {
             return response
         }
-        return ResponseErrorType(rawValue: statusCode)
+        return ResponseError(rawValue: statusCode)
     }
     
 }

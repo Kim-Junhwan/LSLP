@@ -9,7 +9,7 @@ import Foundation
 
 struct AuthorizationCommonErrorHandler: ResponseErrorHandler {
     
-    enum ResponseErrorType: Int, ResponseError {
+    enum ResponseError: Int, ResponseErrorType {
         
         case emptyRequireValue = 400
         
@@ -28,8 +28,8 @@ struct AuthorizationCommonErrorHandler: ResponseErrorHandler {
         }
     }
     
-    func mappingStatusCode(statusCode: Int) -> ResponseError? {
-        return ResponseErrorType(rawValue: statusCode)
+    func mappingStatusCode(statusCode: Int) -> ResponseErrorType? {
+        return ResponseError(rawValue: statusCode)
     }
     
 }

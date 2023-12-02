@@ -8,7 +8,7 @@
 import Foundation
 
 struct RegisterResponseErrorHandler: ResponseErrorHandler {
-    enum ResponseErrorType: Int, ResponseError {
+    enum ResponseError: Int, ResponseErrorType {
         
         case alreadyJoinMember = 409
         
@@ -24,11 +24,11 @@ struct RegisterResponseErrorHandler: ResponseErrorHandler {
         }
     }
     
-    func mappingStatusCode(statusCode: Int) -> ResponseError? {
+    func mappingStatusCode(statusCode: Int) -> ResponseErrorType? {
         if let response = AuthorizationCommonErrorHandler().mappingStatusCode(statusCode: statusCode) {
             return response
         }
-        return ResponseErrorType(rawValue: statusCode)
+        return ResponseError(rawValue: statusCode)
     }
     
 }

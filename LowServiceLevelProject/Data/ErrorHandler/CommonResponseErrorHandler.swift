@@ -9,7 +9,7 @@ import Foundation
 
 struct CommonResponseErrorHandler: ResponseErrorHandler {
     
-    enum ResponseErrorType: Int, ResponseError {
+    enum ResponseError: Int, ResponseErrorType {
         case secretKeyError = 420
         case tooMuchCall = 429
         case pathError = 444
@@ -33,7 +33,7 @@ struct CommonResponseErrorHandler: ResponseErrorHandler {
         }
     }
     
-    func mappingStatusCode(statusCode: Int) -> ResponseError? {
-        return ResponseErrorType(rawValue: statusCode)
+    func mappingStatusCode(statusCode: Int) -> ResponseErrorType? {
+        return ResponseError(rawValue: statusCode)
     }
 }

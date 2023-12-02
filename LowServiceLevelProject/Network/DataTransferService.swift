@@ -46,7 +46,7 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
             case .failure(let failure):
                 switch failure {
                 case .responseError(statusCode: let statusCode, data: _):
-                    let responseError: ResponseError?
+                    let responseError: ResponseErrorType?
                     if let defaultError = self.defaultResponseErrorHandler.mappingStatusCode(statusCode: statusCode) {
                         responseError = defaultError
                     } else {
