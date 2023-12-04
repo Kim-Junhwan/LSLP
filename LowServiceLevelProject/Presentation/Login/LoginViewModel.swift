@@ -11,15 +11,23 @@ final class LoginViewModel: ObservableObject {
     @Published var id: String = ""
     @Published var password: String = ""
     
+    @Published var currentError: Error?
+    @Published var successLogin: Bool = false
+    
     let repository: AuthorizationRepository = DefaultAuthRepository(dataTransferService: DataTransferService(networkService: DefaultNetworkService(config: APINetworkConfigs.authoTestConfig), defaultResponseHandler: CommonResponseErrorHandler()))
     
     func login() {
         repository.login(request: .init(email: id, password: "\(password)")) { result in
             switch result {
-            case .success(let success):
-                print(success)
+            case .success(_):
+                DispatchQueue.main.async {
+                    self.successLogin = true
+                }
             case .failure(let failure):
-                print(failure.localizedDescription)
+                DispatchQueue.main.async {
+                    self.currentError = failure
+                    self.successLogin = false
+                }
             }
         }
     }
