@@ -11,5 +11,6 @@ enum KeychainError: Error {
     case noAccessToken
     case noRefreshToken
     case unexpectedPasswordData
+    case alrealyValue
     case unhandledError(status: OSStatus)
 }
