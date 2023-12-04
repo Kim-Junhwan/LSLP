@@ -12,7 +12,7 @@ enum RetryResult {
     case retry(endpoint: Requestable, maxCount: Int)
 }
 
-protocol ResponseErrorType: Error, LocalizedError {
+protocol ResponseErrorType: LocalizedError {
     func retry(endpoint: Requestable, completion: @escaping(RetryResult) -> Void)
 }
 
