@@ -26,7 +26,7 @@ extension Requestable {
     private func makeURL(networkConfig: NetworkConfiguration) throws -> URL {
         let baseURL = networkConfig.baseURL.absoluteString.last != "/" ? networkConfig.baseURL.absoluteString.appending("/") : networkConfig.baseURL.absoluteString
         let endpoint = baseURL.appending(path)
-        guard var urlComponents = URLComponents(string: endpoint) else { throw NetworkError.url }
+        guard var urlComponents = URLComponents(string: endpoint) else { throw NetworkServiceError.url }
         var queryItems: [URLQueryItem] = []
         queryItems += networkConfig.queryParameter.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
         if let queryParameter {
@@ -34,7 +34,7 @@ extension Requestable {
             queryItems += query.map { URLQueryItem(name: $0.key, value: String(describing: $0.value)) }
             urlComponents.queryItems = queryItems
         }
-        guard let url = urlComponents.url else { throw NetworkError.url }
+        guard let url = urlComponents.url else { throw NetworkServiceError.url }
         return url
     }
     

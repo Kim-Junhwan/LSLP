@@ -7,14 +7,14 @@
 
 import Foundation
 
-enum NetworkError: Error {
+enum NetworkServiceError: Error {
     case responseError(statusCode: Int, data: Data?)
     case networkError(error: Error)
     case url
 }
 
 protocol NetworkService {
-    func request(endPoint: Requestable ,completion: @escaping (Result<Data?, NetworkError>) -> Void)
+    func request(endPoint: Requestable ,completion: @escaping (Result<Data?, NetworkServiceError>) -> Void)
 }
 
 final class DefaultNetworkService {
@@ -28,7 +28,7 @@ final class DefaultNetworkService {
 
 extension DefaultNetworkService: NetworkService {
     
-    func request(endPoint: Requestable ,completion: @escaping (Result<Data?, NetworkError>) -> Void) {
+    func request(endPoint: Requestable ,completion: @escaping (Result<Data?, NetworkServiceError>) -> Void) {
         do {
             let request = try endPoint.makeURLRequest(networkConfig: config)
             URLSession.shared.dataTask(with: request) { data, response, error in

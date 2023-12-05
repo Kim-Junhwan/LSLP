@@ -10,10 +10,9 @@ import Foundation
 enum DataTransferServiceError: Error {
     case parsing(error: Error)
     case noData
-    case networkError(error: NetworkError)
+    case networkError(error: NetworkServiceError)
     case unknownStatusCode(statusCode: Int)
 }
-
 
 final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
     private let networkService: NetworkService
