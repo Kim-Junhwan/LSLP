@@ -16,7 +16,7 @@ struct TabBar: View {
                     Text("메인")
                 }
             
-            OptionView()
+            ProfileView()
                 .tabItem {
                     Image(systemName: "gear")
                     Text("설정")
