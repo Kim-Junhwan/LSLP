@@ -9,20 +9,25 @@ import Foundation
 
 @MainActor
 class UserStateViewModel: ObservableObject {
+    
     @Published var isLoggedIn = false
     @Published var currentError: Error?
+    @Published var isLoading: Bool = false
     
     let repository: AuthorizationRepository = DefaultAuthRepository(dataTransferService: DataTransferService(networkService: DefaultNetworkService(config: APINetworkConfigs.authoTestConfig), defaultResponseHandler: CommonResponseErrorHandler()))
     
     func signIn(email: String, password: String) {
+        isLoading = true
         repository.login(request: .init(email: email, password: "\(password)")) { [weak self] result in
             switch result {
             case .success(_):
                 DispatchQueue.main.async {
+                    self?.isLoading = false
                     self?.isLoggedIn = true
                 }
             case .failure(let failure):
                 DispatchQueue.main.async {
+                    self?.isLoading = false
                     self?.currentError = failure
                     self?.isLoggedIn = false
                 }

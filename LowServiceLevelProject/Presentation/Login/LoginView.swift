@@ -53,6 +53,7 @@ struct LoginView: View {
                 }
                 
             }
+            LoadingView(isShow: $vm.isLoading)
         }
     }
 }
