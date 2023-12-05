@@ -2,7 +2,7 @@
 //  RegisterViewModel.swift
 //  LowServiceLevelProject
 //
-//  Created by JunHwan Kim on 2023/11/22.
+//  Created by JunHwan Kim on 2023/12/05.
 //
 
 import Foundation
@@ -14,47 +14,33 @@ final class RegisterViewModel: ObservableObject {
     @Published var nick: String = ""
     @Published var phone: String = ""
     @Published var birthDay: Date = Date()
-    @Published var isLoading: Bool = false
     
-    var emailEmpty: Bool {
-        return email.isEmpty
-    }
+    @Published var isLoading: Bool = false
+    @Published var currentError: Error?
+    @Published var registerSuccess: Bool = false
+    @Published var validEmail: Bool = false
     
     let repository: AuthorizationRepository = DefaultAuthRepository(dataTransferService: DataTransferService(networkService: DefaultNetworkService(config: APINetworkConfigs.registerConfig), defaultResponseHandler: CommonResponseErrorHandler()))
     
-//    init(repository: AuthorizationRepository) {
-//        self.repository = repository
-//    }
-    
-    func register(completion: @escaping (Error?)-> Void) {
-        changeLoadingValue(true)
-        repository.register(request: .init(email: email, password: password, nick: nick, phoneNumber: phone, birthDay: birthDay.description)) { result in
+    func regist() {
+        repository.register(request: .init(email: email, password: password, nick: nick, phoneNumber: phone, birthDay: birthDay.description)) { [weak self] result in
             switch result {
             case .success(_):
-                completion(nil)
+                self?.registerSuccess = true
             case .failure(let failure):
-                completion(failure)
+                self?.currentError = failure
             }
-            self.changeLoadingValue(false)
         }
     }
     
-    func validateEmail(completion: @escaping (Error?)-> Void) {
-        changeLoadingValue(true)
-        repository.validateEmail(request: .init(email: email)) { result in
+    func validateEmail() {
+        repository.validateEmail(request: .init(email: email)) { [weak self] result in
             switch result {
             case .success(_):
-                completion(nil)
+                self?.validEmail = true
             case .failure(let failure):
-                completion(failure)
+                self?.currentError = failure
             }
-            self.changeLoadingValue(false)
-        }
-    }
-    
-    private func changeLoadingValue(_ bool: Bool) {
-        DispatchQueue.main.async {
-            self.isLoading = bool
         }
     }
 }

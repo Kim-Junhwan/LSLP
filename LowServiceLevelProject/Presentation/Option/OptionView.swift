@@ -9,6 +9,7 @@ import SwiftUI
 
 struct OptionView: View {
     
+    @EnvironmentObject var vm: UserStateViewModel
     @State private var selectIndex: Int?
     @State private var showLogoutAlert: Bool = false
     
@@ -26,7 +27,7 @@ struct OptionView: View {
             .alert("로그아웃", isPresented: $showLogoutAlert) {
                 Button("취소", role: .cancel) {}
                 Button("로그아웃", role: .destructive){
-                    
+                    vm.signOut()
                 }
             } message: {
                 Text("로그아웃 하시겠습니까?")

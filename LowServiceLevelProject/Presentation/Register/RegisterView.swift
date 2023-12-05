@@ -37,7 +37,6 @@ struct RegisterView: View {
     @State private var showErrorAlert = false
     @State private var showAlert = false
     
-    @State private var currentAlert: CurrentAlert = .register
     @State private var currentError: Error?
     @State private var isRegister: Bool = false
     
@@ -49,17 +48,10 @@ struct RegisterView: View {
                         TextField("이메일", text: $viewModel.email, prompt: Text("이메일"))
                             .focusHightLight()
                         Button("중복 확인") {
-                            currentAlert = .validateEmail
-                            viewModel.validateEmail { error in
-                                if error != nil {
-                                    self.currentError = error
-                                    showErrorAlert = true
-                                    return
-                                }
-                                showAlert = true
-                            }
+                            viewModel.validateEmail()
                         }
-                        .disabled(viewModel.emailEmpty)
+                        .disabled(viewModel.email.isEmpty)
+                        .alert(isPresented: <#T##Binding<Bool>#>, error: <#T##LocalizedError?#>, actions: <#T##() -> View#>)
                         .alert(currentAlert.errorTitle, isPresented: $showErrorAlert) {
                             Button("확인"){}
                         } message: {
@@ -87,15 +79,7 @@ struct RegisterView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("회원가입") {
                             currentAlert = .register
-                            viewModel.register { error in
-                                if error != nil {
-                                    self.currentError = error
-                                    showErrorAlert = true
-                                    return
-                                }
-                                isRegister = true
-                                showAlert = true
-                            }
+                            viewModel.regist()
                         }
                     }
                 }

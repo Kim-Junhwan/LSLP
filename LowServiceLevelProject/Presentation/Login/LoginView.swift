@@ -9,7 +9,10 @@ import SwiftUI
 
 struct LoginView: View {
     
-    @StateObject private var viewModel = LoginViewModel()
+    @EnvironmentObject var vm: UserStateViewModel
+    @State var email = ""
+    @State var password = ""
+    
     @FocusState private var isFocus: Bool
     @State private var presentRegisterView: Bool = false
     @State private var showErrorAlert: Bool = false
@@ -17,15 +20,15 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .center, spacing: 20) {
-                TextField("이메일", text: $viewModel.id, prompt: Text("이메일"))
+                TextField("이메일", text: $email, prompt: Text("이메일"))
                     .focusHightLight()
                     .focused($isFocus)
                 
-                SecureField("비밀번호", text: $viewModel.password, prompt: Text("비밀번호"))
+                SecureField("비밀번호", text: $password, prompt: Text("비밀번호"))
                     .focusHightLight()
                     .focused($isFocus)
                 Button("로그인") {
-                    viewModel.login()
+                    vm.signIn(email: email, password: password)
                 }
                 NavigationLink("회원가입") {
                     RegisterView()
@@ -40,10 +43,7 @@ struct LoginView: View {
                     }
                 }
             }
-            .errorAlert(error: $viewModel.currentError, title: "")
-            .fullScreenCover(isPresented: $viewModel.successLogin, content: {
-                TabBar()
-            })
+            .errorAlert(error: $vm.currentError, title: "")
             .onAppear {
                 do {
                     try KeychainService.shared.delete(key: KeychainAuthorizNameSpace.accesshToken)
