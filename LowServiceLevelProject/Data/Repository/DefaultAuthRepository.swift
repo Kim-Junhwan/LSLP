@@ -46,7 +46,13 @@ extension DefaultAuthRepository: AuthorizationRepository {
         dataTransferService.request(endpoint: LSLPAPIEndpoints.login(request: endpoint), endpointResponseHandler: LoginResponseErrorHandler()) { result in
             switch result {
             case .success(let success):
-                completion(.success(success))
+                do {
+                    try KeychainService.shared.save(key: KeychainAuthorizNameSpace.refreshToken, value: success.refreshToken)
+                    try KeychainService.shared.save(key: KeychainAuthorizNameSpace.accesshToken, value: success.token)
+                    completion(.success(success))
+                } catch {
+                    completion(.failure(KeychainError.alrealyValue))
+                }
             case .failure(let failure):
                 completion(.failure(failure))
             }
