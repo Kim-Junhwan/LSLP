@@ -23,9 +23,9 @@ struct LocalizedAlertError: LocalizedError {
 }
 
 extension View {
-    func errorAlert(error: Binding<Error?>, title: String) -> some View {
+    func errorAlert(error: Binding<Error?>) -> some View {
         let localizedAlertError = LocalizedAlertError(error: error.wrappedValue)
-        return alert(isPresented: .constant(localizedAlertError != nil), error: localizedAlertError) { _ in
+        return alert(Text("오류"),isPresented: .constant(localizedAlertError != nil), presenting: localizedAlertError) { _ in
             Button("확인") {
                 error.wrappedValue = nil
             }

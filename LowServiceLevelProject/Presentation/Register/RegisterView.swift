@@ -8,37 +8,8 @@
 import SwiftUI
 
 struct RegisterView: View {
-    
-    enum CurrentAlert {
-        case validateEmail
-        case register
-        
-        var title: String {
-            switch self {
-            case .validateEmail:
-                return "사용 가능한 이메일"
-            case .register:
-                return "가입 완료"
-            }
-        }
-        
-        var errorTitle: String {
-            switch self {
-            case .validateEmail:
-                return "사용이 불가능한 이메일입니다"
-            case .register:
-                return "회원가입 실패"
-            }
-        }
-    }
-    
     @Environment(\.dismiss) private var dismiss
     @StateObject var viewModel = RegisterViewModel()
-    @State private var showErrorAlert = false
-    @State private var showAlert = false
-    
-    @State private var currentError: Error?
-    @State private var isRegister: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -51,15 +22,10 @@ struct RegisterView: View {
                             viewModel.validateEmail()
                         }
                         .disabled(viewModel.email.isEmpty)
-                        .alert(isPresented: <#T##Binding<Bool>#>, error: <#T##LocalizedError?#>, actions: <#T##() -> View#>)
-                        .alert(currentAlert.errorTitle, isPresented: $showErrorAlert) {
-                            Button("확인"){}
-                        } message: {
-                            Text(currentError?.localizedDescription ?? "")
-                        }
-                        .alert(currentAlert.title, isPresented: $showAlert) {
+                        .errorAlert(error: $viewModel.currentError)
+                        .alert(viewModel.currentAction?.title ?? "", isPresented: $viewModel.showAlert) {
                             Button("확인"){
-                                if isRegister {
+                                if viewModel.successRegister {
                                     dismiss()
                                 }
                             }
@@ -78,7 +44,6 @@ struct RegisterView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("회원가입") {
-                            currentAlert = .register
                             viewModel.regist()
                         }
                     }

@@ -43,7 +43,7 @@ struct LoginView: View {
                     }
                 }
             }
-            .errorAlert(error: $vm.currentError, title: "")
+            .errorAlert(error: $vm.currentError)
             .onAppear {
                 do {
                     try KeychainService.shared.delete(key: KeychainAuthorizNameSpace.accesshToken)
