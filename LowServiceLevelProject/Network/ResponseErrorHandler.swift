@@ -10,6 +10,8 @@ import Foundation
 enum RetryResult {
     case notRetry(error: Error)
     case retry(endpoint: Requestable, maxCount: Int)
+    case notRetryNotPass
+    case retryNotPass(endpoint: Requestable, maxCount: Int)
 }
 
 protocol ResponseErrorType: LocalizedError {
