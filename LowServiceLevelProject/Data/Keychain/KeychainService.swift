@@ -27,6 +27,7 @@ final class KeychainService {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccount as String: key,
                                     kSecMatchLimit as String: kSecMatchLimitOne,
+                                    kSecReturnAttributes as String: true,
                                     kSecReturnData as String: true
                                     ]
         var item: CFTypeRef?
