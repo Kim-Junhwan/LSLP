@@ -14,8 +14,8 @@ struct MyProfileResponse: Decodable {
     let _id: String
     let email: String
     let nick: String
-    let phoneNum: String
-    let birthDay: String
+    let phoneNum: String?
+    let birthDay: String?
     let profile: String?
     
     func toDomain() -> MyProfile {

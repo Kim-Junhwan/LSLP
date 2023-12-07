@@ -14,8 +14,8 @@ struct MyProfile {
     let id: String
     let email: String
     let nick: String
-    let phoneNumber: String
-    let birthDay: String
+    let phoneNumber: String?
+    let birthDay: String?
     let profileImagePath: String?
 }
 
