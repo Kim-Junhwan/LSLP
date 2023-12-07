@@ -25,6 +25,11 @@ struct LowServiceLevelProjectApp: App {
 struct ApplicationSwitcher: View {
     @EnvironmentObject var vm: UserStateViewModel
     var body: some View {
+        currentView
+    }
+    
+    @ViewBuilder
+    var currentView: some View {
         if vm.isLoggedIn {
             TabBar()
         } else {
