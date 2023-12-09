@@ -8,5 +8,15 @@
 import Foundation
 
 class NetworkDIContainer {
+    private lazy var defaultNetworkService: NetworkService = {
+        return DefaultNetworkService(config: APINetworkConfigs.authoTestConfig)
+    }()
     
+    private lazy var defaultDataTransferService: DataTransferService = {
+        return DataTransferService(networkService: defaultNetworkService, defaultResponseHandler: CommonResponseErrorHandler())
+    }()
+    
+    func getAuthRepository() -> AuthorizationRepository {
+        return DefaultAuthRepository(dataTransferService: defaultDataTransferService)
+    }
 }
