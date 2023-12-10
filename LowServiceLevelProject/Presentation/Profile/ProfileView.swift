@@ -17,37 +17,44 @@ struct ProfileView: View {
     
     var body: some View {
         NavigationStack {
-            HStack {
-                Image(systemName: "person")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 150, height: 150)
-                    .background(.gray)
-                    .foregroundStyle(.white)
-                    .clipShape(Circle())
-                    .overlay {
-                        Circle()
-                            .stroke(Color.green, lineWidth: 5)
-                    }
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            NavigationLink(destination: OptionView()) {
-                                Image(systemName: "ellipsis")
-                                    .foregroundStyle(Color.gray)
+            ScrollView {
+                HStack {
+                    Image(systemName: "person")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 150, height: 150)
+                        .background(.gray)
+                        .foregroundStyle(.white)
+                        .clipShape(Circle())
+                        .overlay {
+                            Circle()
+                                .stroke(Color.green, lineWidth: 5)
+                        }
+                        .toolbar {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                NavigationLink(destination: OptionView()) {
+                                    Image(systemName: "ellipsis")
+                                        .foregroundStyle(Color.gray)
+                                }
+                            }
+                            ToolbarItem(placement: .topBarTrailing) {
+                                NavigationLink(destination: OptionView()) {
+                                    Image(systemName: "gearshape.fill")
+                                        .foregroundStyle(Color.gray)
+                                }
                             }
                         }
-                        ToolbarItem(placement: .topBarTrailing) {
-                            NavigationLink(destination: OptionView()) {
-                                Image(systemName: "gearshape.fill")
-                                    .foregroundStyle(Color.gray)
-                            }
-                        }
+                    VStack {
+                        Text("1234")
+                            .font(.title)
                     }
-                VStack {
-                    Text("1234")
-                        .font(.title)
                 }
+                .frame(maxWidth: .infinity)
             }
+            
+        }
+        .refreshable {
+            print("Hello")
         }
         .viewDidLoad {
             viewModel.getMyProfile()
