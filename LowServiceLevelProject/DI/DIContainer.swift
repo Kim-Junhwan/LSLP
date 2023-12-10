@@ -7,7 +7,7 @@
 
 import Foundation
 
-class NetworkDIContainer {
+class NetworkDIContainer: ObservableObject {
     private lazy var defaultNetworkService: NetworkService = {
         return DefaultNetworkService(config: APINetworkConfigs.authoTestConfig)
     }()
@@ -18,5 +18,9 @@ class NetworkDIContainer {
     
     func getAuthRepository() -> AuthorizationRepository {
         return DefaultAuthRepository(dataTransferService: defaultDataTransferService)
+    }
+    
+    func getProfileRepository() -> ProfileRepository {
+        return DefaultProfileRepository(dataTransferService: defaultDataTransferService)
     }
 }

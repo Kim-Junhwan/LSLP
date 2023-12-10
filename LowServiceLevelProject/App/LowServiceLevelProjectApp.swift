@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct LowServiceLevelProjectApp: App {
     
+    @StateObject var networkDiContainer = NetworkDIContainer()
     @StateObject var userStateViewModel = UserStateViewModel()
     
     var body: some Scene {
@@ -18,6 +19,7 @@ struct LowServiceLevelProjectApp: App {
                 ApplicationSwitcher()
             }
             .environmentObject(userStateViewModel)
+            .environmentObject(networkDiContainer)
         }
     }
 }

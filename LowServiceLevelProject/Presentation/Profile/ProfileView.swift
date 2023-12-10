@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct ProfileView: View {
-    
     @State private var showOptionView: Bool = false
+    @ObservedObject private var viewModel: ProfileViewModel
+    
+    init(viewModel: ProfileViewModel) {
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         NavigationStack {
@@ -28,23 +32,28 @@ struct ProfileView: View {
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             NavigationLink(destination: OptionView()) {
-                                Image(systemName: "gear")
+                                Image(systemName: "ellipsis")
+                                    .foregroundStyle(Color.gray)
+                            }
+                        }
+                        ToolbarItem(placement: .topBarTrailing) {
+                            NavigationLink(destination: OptionView()) {
+                                Image(systemName: "gearshape.fill")
                                     .foregroundStyle(Color.gray)
                             }
                         }
                     }
-                
                 VStack {
                     Text("1234")
                         .font(.title)
                 }
             }
         }
-        
+        .viewDidLoad {
+            viewModel.getMyProfile()
+        }
+        .errorAlert(error: $viewModel.currentError)
         
     }
 }
 
-#Preview {
-    ProfileView()
-}
