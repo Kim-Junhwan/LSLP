@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct TabBar: View {
+    
+    @EnvironmentObject var networkDIContainer: NetworkDIContainer
+    
     var body: some View {
         TabView {
             Text("안녕")
@@ -16,7 +19,7 @@ struct TabBar: View {
                     Text("메인")
                 }
             
-            ProfileView()
+            ProfileView(viewModel: .init(repository: networkDIContainer.getProfileRepository()))
                 .tabItem {
                     Image(systemName: "gear")
                     Text("설정")
