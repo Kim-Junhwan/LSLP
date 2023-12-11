@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 @MainActor
 class UserStateViewModel: ObservableObject {
@@ -15,18 +16,25 @@ class UserStateViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var refreshTokenExpireAlert: Bool = false
     
+    
     let repository: AuthorizationRepository = DefaultAuthRepository(dataTransferService: DataTransferService(networkService: DefaultNetworkService(config: APINetworkConfigs.authoTestConfig), defaultResponseHandler: CommonResponseErrorHandler()))
+    var pub: Cancellable?
     
     init() {
-        let _ = NotificationCenter.default.publisher(for: .init("expirationRefreshToken"))
+        
+    }
+    
+    private func registeredRefreshToken() {
+        pub = NotificationCenter.default.publisher(for: .init("expirationRefreshToken"))
             .receive(on: RunLoop.main)
-            .sink { [weak self] _ in
-            self?.refreshTokenExpireAlert = true
+            .sink { _ in
+            self.refreshTokenExpireAlert = true
         }
     }
     
     func signIn(email: String, password: String) {
         isLoading = true
+        registeredRefreshToken()
         repository.login(request: .init(email: email, password: "\(password)")) { [weak self] result in
             switch result {
             case .success(_):
@@ -46,6 +54,7 @@ class UserStateViewModel: ObservableObject {
     }
     
     func signOut() {
+        pub = nil
         do {
             try KeychainService.shared.delete(key: KeychainAuthorizNameSpace.accesshToken)
             try KeychainService.shared.delete(key: KeychainAuthorizNameSpace.refreshToken)
