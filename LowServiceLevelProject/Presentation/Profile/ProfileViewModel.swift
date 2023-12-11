@@ -9,6 +9,7 @@ import Foundation
 
 class ProfileViewModel: ObservableObject {
     
+    @Published var myProfile: MyProfile?
     @Published var currentError: Error?
     
     let repository: ProfileRepository
@@ -21,9 +22,13 @@ class ProfileViewModel: ObservableObject {
         repository.getMyProfile { [weak self] result in
             switch result {
             case .success(let success):
-                print(success)
+                DispatchQueue.main.async {
+                    self?.myProfile = success
+                }
             case .failure(let failure):
-                self?.currentError = failure
+                DispatchQueue.main.async {
+                    self?.currentError = failure
+                }
             }
         }
     }
