@@ -13,12 +13,24 @@ struct TokenErrorHandler: ResponseErrorHandler {
         case expirationAccessToken = 419
         case forbidden = 403
         
-        func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
+        func retry(endpoint: Requestable , completion: @escaping (RetryResult) -> Void) {
             switch self {
             case .unknownAccessToken, .forbidden:
                 completion(.notRetry(error: self))
             case .expirationAccessToken:
-                completion(.notRetry(error: self))
+                let refreshEndpoint = TokenEndpoints.refreshAccessToken()
+                let dataTransferService = DataTransferService(networkService: DefaultNetworkService(config: APINetworkConfigs.authoTestConfig), defaultResponseHandler: CommonResponseErrorHandler())
+                dataTransferService.request(endpoint: refreshEndpoint, endpointResponseHandler: AccessTokenRefreshErrorHandler()) { result in
+                    switch result {
+                    case .success(let refreshToken):
+                        var copyReq = endpoint
+                        copyReq.headerParameter["Authorization"] = refreshToken.token
+                        completion(.retry(endpoint: copyReq, maxCount: 1))
+                    case .failure(let failure):
+                        completion(.notRetry(error: failure))
+                    }
+                }
+                
             }
         }
     }

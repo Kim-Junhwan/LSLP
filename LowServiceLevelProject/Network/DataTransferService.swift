@@ -34,6 +34,10 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
                 self.request(count: count+1, maxCount: maxCount, endpoint: endpoint, endpointResponseHandler: endpointResponseHandler) { result in
                     completion(result)
                 }
+            case .notRetryNotPass:
+                break
+            case .retryNotPass(endpoint: let endpoint, maxCount: let maxCount):
+                break
             }
         }
         
@@ -76,6 +80,10 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
                 self.request(count: 0, maxCount: maxCount, endpoint: end, endpointResponseHandler: endpointResponseHandler) { result in
                     completion(result)
                 }
+            case .notRetryNotPass:
+                break
+            case .retryNotPass(endpoint: let endpoint, maxCount: let maxCount):
+                break
             }
         }
         networkService.request(endPoint: endpoint) { result in

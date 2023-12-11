@@ -18,7 +18,7 @@ protocol Requestable {
     var path: String { get }
     var method: HTTPMethodType { get }
     var queryParameter: Encodable? { get }
-    var headerParameter: [String: String] { get }
+    var headerParameter: [String: String] { get set }
     var bodyParameter: Encodable? { get }
 }
 

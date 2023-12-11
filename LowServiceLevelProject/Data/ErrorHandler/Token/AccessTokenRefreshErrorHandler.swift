@@ -21,6 +21,15 @@ struct AccessTokenRefreshErrorHandler: ResponseErrorHandler {
                 completion(.notRetryNotPass)
             }
         }
+        
+        var errorDescription: String? {
+            switch self {
+            case .accessTokenIsValid:
+                return "액세스 토큰이 옳바르지 않습니다."
+            case .expirationRefreshToken:
+                return "리프레시 토큰이 만료되었습니다."
+            }
+        }
     }
     
     func mappingStatusCode(statusCode: Int) -> ResponseErrorType? {
