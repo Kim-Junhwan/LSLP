@@ -17,11 +17,11 @@ class UserStateViewModel: ObservableObject {
     @Published var refreshTokenExpireAlert: Bool = false
     
     
-    let repository: AuthorizationRepository = DefaultAuthRepository(dataTransferService: DataTransferService(networkService: DefaultNetworkService(config: APINetworkConfigs.authoTestConfig), defaultResponseHandler: CommonResponseErrorHandler()))
+    let loginFlowUseCases: LoginFlowUseCase
     var pub: Cancellable?
     
-    init() {
-        
+    init(loginFlowUseCases: LoginFlowUseCase) {
+        self.loginFlowUseCases = loginFlowUseCases
     }
     
     private func registeredRefreshToken() {
@@ -35,20 +35,16 @@ class UserStateViewModel: ObservableObject {
     func signIn(email: String, password: String) {
         isLoading = true
         registeredRefreshToken()
-        repository.login(request: .init(email: email, password: "\(password)")) { [weak self] result in
-            switch result {
-            case .success(_):
-                DispatchQueue.main.async {
-                    self?.isLoading = false
-                    self?.isLoggedIn = true
-                }
-                
-            case .failure(let failure):
-                DispatchQueue.main.async {
-                    self?.isLoading = false
-                    self?.currentError = failure
-                    self?.isLoggedIn = false
-                }
+        loginFlowUseCases.login(email: email, password: password) { error in
+            if let error {
+                self.isLoading = false
+                self.currentError = error
+                self.isLoggedIn = false
+                return
+            }
+            DispatchQueue.main.async {
+                self.isLoading = false
+                self.isLoggedIn = true
             }
         }
     }
@@ -56,8 +52,7 @@ class UserStateViewModel: ObservableObject {
     func signOut() {
         pub = nil
         do {
-            try KeychainService.shared.delete(key: KeychainAuthorizNameSpace.accesshToken)
-            try KeychainService.shared.delete(key: KeychainAuthorizNameSpace.refreshToken)
+            try loginFlowUseCases.logout()
             isLoggedIn = false
         } catch {
             currentError = error

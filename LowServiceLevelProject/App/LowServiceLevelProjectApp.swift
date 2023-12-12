@@ -10,23 +10,15 @@ import SwiftUI
 @main
 struct LowServiceLevelProjectApp: App {
     
-    @StateObject var networkDiContainer = NetworkDIContainer()
-    @StateObject var userStateViewModel = UserStateViewModel()
+    @StateObject var appDIContainer = AppDIContainer()
     
     var body: some Scene {
         WindowGroup {
             VStack {
                 ApplicationSwitcher()
             }
-            .alert(Text("로그인 세션 만료"), isPresented: $userStateViewModel.refreshTokenExpireAlert, actions: {
-                Button("확인") {
-                    userStateViewModel.isLoggedIn = false
-                }
-            }, message: {
-                Text("로그인 세션이 만료되었습니다. 다시 로그인해주십시오.")
-            })
-            .environmentObject(userStateViewModel)
-            .environmentObject(networkDiContainer)
+            .environmentObject(appDIContainer.getUserStateViewModel())
+            .environmentObject(appDIContainer)
         }
     }
 }
@@ -35,6 +27,13 @@ struct ApplicationSwitcher: View {
     @EnvironmentObject var vm: UserStateViewModel
     var body: some View {
         currentView
+        .alert(Text("로그인 세션 만료"), isPresented: $vm.refreshTokenExpireAlert, actions: {
+            Button("확인") {
+                vm.isLoggedIn = false
+            }
+        }, message: {
+            Text("로그인 세션이 만료되었습니다. 다시 로그인해주십시오.")
+        })
     }
     
     @ViewBuilder

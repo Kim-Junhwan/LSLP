@@ -24,7 +24,11 @@ struct TokenErrorHandler: ResponseErrorHandler {
                     switch result {
                     case .success(let refreshToken):
                         var copyReq = endpoint
-                        try! KeychainService.shared.update(key: KeychainAuthorizNameSpace.accesshToken, value: refreshToken.token, errorKind: .noAccessToken)
+                        do {
+                            try DefaultTokenRepository.saveTokenAtKeyChain(tokenCase: .accessToken, value: refreshToken.token)
+                        } catch {
+                            completion(.notRetry(error: error))
+                        }
                         copyReq.headerParameter["Authorization"] = refreshToken.token
                         completion(.retry(endpoint: copyReq, maxCount: 1))
                     case .failure(let failure):

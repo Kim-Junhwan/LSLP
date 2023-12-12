@@ -14,7 +14,7 @@ protocol AuthorizationRepository {
 }
 
 protocol TokenRepository {
-    func saveToken(tokenCase: TokenCase, value: String) throws
-    func readToken(tokenCase: TokenCase) throws -> String
-    func deleteToken(tokenCase: TokenCase) throws
+     func saveToken(tokenCase: TokenCase, value: String) throws
+     func readToken(tokenCase: TokenCase) throws -> String
+     func deleteToken(tokenCase: TokenCase) throws
 }
