@@ -8,8 +8,7 @@
 import Foundation
 
 enum KeychainError: Error {
-    case noAccessToken
-    case noRefreshToken
+    case noToken
     case unexpectedPasswordData
     case alrealyValue
     case unhandledError(status: OSStatus)

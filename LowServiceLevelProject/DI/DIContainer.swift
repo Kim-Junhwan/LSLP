@@ -23,4 +23,11 @@ class NetworkDIContainer: ObservableObject {
     func getProfileRepository() -> ProfileRepository {
         return DefaultProfileRepository(dataTransferService: defaultDataTransferService)
     }
+    
+    func getTokenRepository() -> TokenRepository {
+        return DefaultTokenRepository()
+    }
+}
+
+class AppDIContainer: ObservableObject {
 }

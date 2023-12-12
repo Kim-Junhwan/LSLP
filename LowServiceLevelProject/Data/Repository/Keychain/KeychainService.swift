@@ -7,32 +7,33 @@
 
 import Foundation
 
-final class KeychainService {
-    
-    static let shared = KeychainService()
-    
-    private init() {}
-    
-    func save(key: String, value: String) throws {
+final class DefaultTokenRepository: TokenRepository {
+    func saveToken(tokenCase: TokenCase, value: String) throws {
         guard let decodeValue = value.data(using: String.Encoding.utf8) else { throw KeychainError.unexpectedPasswordData }
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                    kSecAttrAccount as String: key,
+                                    kSecAttrAccount as String: tokenCase.tokenIdentifier,
                                     kSecValueData as String: decodeValue
-                                    ]
+        ]
         let status = SecItemAdd(query as CFDictionary, nil)
-        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
+        if status != errSecSuccess {
+            if status == errSecDuplicateItem {
+                try updateTokenValue(tokenCase: tokenCase, value: value)
+            } else {
+                throw KeychainError.unhandledError(status: status)
+            }
+        }
     }
     
-    func search(key: String, errorKind: KeychainError) throws -> String {
+    func readToken(tokenCase: TokenCase) throws -> String {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                    kSecAttrAccount as String: key,
+                                    kSecAttrAccount as String: tokenCase.tokenIdentifier,
                                     kSecMatchLimit as String: kSecMatchLimitOne,
                                     kSecReturnAttributes as String: true,
                                     kSecReturnData as String: true
                                     ]
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
-        guard status != errSecItemNotFound else { throw errorKind }
+        guard status != errSecItemNotFound else { throw KeychainError.noToken }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
         guard let existingItem = item as? [String: Any],
               let originData = existingItem[kSecValueData as String] as? Data,
@@ -43,20 +44,20 @@ final class KeychainService {
         return data
     }
     
-    func update(key: String, value: String, errorKind: KeychainError) throws {
+    func deleteToken(tokenCase: TokenCase) throws {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                    kSecAttrAccount as String: key]
+                                    kSecAttrAccount as String: tokenCase.tokenIdentifier]
+        let status = SecItemDelete(query as CFDictionary)
+        guard status == errSecSuccess || status == errSecItemNotFound else { throw KeychainError.unhandledError(status: status) }
+    }
+    
+    private func updateTokenValue(tokenCase: TokenCase, value: String) throws {
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
+                                    kSecAttrAccount as String: tokenCase.tokenIdentifier]
         let convertValue = value.data(using: String.Encoding.utf8)!
         let attributes: [String: Any] = [kSecValueData as String: convertValue]
         let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
-        guard status != errSecItemNotFound else { throw errorKind}
+        guard status != errSecItemNotFound else { throw KeychainError.noToken }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
-    }
-    
-    func delete(key: String) throws {
-        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                    kSecAttrAccount as String: key]
-        let status = SecItemDelete(query as CFDictionary)
-        guard status == errSecSuccess || status == errSecItemNotFound else { throw KeychainError.unhandledError(status: status) }
     }
 }
