@@ -41,18 +41,12 @@ extension DefaultAuthRepository: AuthorizationRepository {
         }
     }
     
-    func login(request: LoginRequest, completion: @escaping (Result<LoginResponse, Error>) -> Void) {
+    func login(request: LoginRequest, completion: @escaping (Result<LoginSuccessResponse, Error>) -> Void) {
         let endpoint = LoginRequestDTO(email: request.email, password: request.password)
         dataTransferService.request(endpoint: AuthorizationEndpoints.login(request: endpoint), endpointResponseHandler: LoginResponseErrorHandler()) { result in
             switch result {
             case .success(let success):
-                do {
-                    try KeychainService.shared.save(key: KeychainAuthorizNameSpace.refreshToken, value: success.refreshToken)
-                    try KeychainService.shared.save(key: KeychainAuthorizNameSpace.accesshToken, value: success.token)
-                    completion(.success(success))
-                } catch {
-                    completion(.failure(KeychainError.alrealyValue))
-                }
+                completion(.success(.init(id: success._id, accessToken: success.token, refreshToken: success.refreshToken)))
             case .failure(let failure):
                 completion(.failure(failure))
             }

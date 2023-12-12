@@ -10,5 +10,11 @@ import Foundation
 protocol AuthorizationRepository {
     func register(request: RegisterRequestDTO, completion: @escaping(Result<EmptyResponse,Error>) -> Void)
     func validateEmail(request: ValidateEmailRequest, completion: @escaping(Result<EmptyResponse,Error>) -> Void)
-    func login(request: LoginRequest, completion: @escaping (Result<LoginResponse, Error>) -> Void)
+    func login(request: LoginRequest, completion: @escaping (Result<LoginSuccessResponse, Error>) -> Void)
+}
+
+protocol TokenRepository {
+    func saveToken(tokenCase: TokenCase, value: String) throws
+    func readToken(tokenCase: TokenCase) throws -> String
+    func deleteToken(tokenCase: TokenCase) throws
 }
