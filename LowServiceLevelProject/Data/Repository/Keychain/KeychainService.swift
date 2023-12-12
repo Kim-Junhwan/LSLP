@@ -8,7 +8,20 @@
 import Foundation
 
 final class DefaultTokenRepository: TokenRepository {
+    
     func saveToken(tokenCase: TokenCase, value: String) throws {
+        try Self.saveTokenAtKeyChain(tokenCase: tokenCase, value: value)
+    }
+    
+    func readToken(tokenCase: TokenCase) throws -> String {
+        try Self.readTokenAtKeyChain(tokenCase: tokenCase)
+    }
+    
+    func deleteToken(tokenCase: TokenCase) throws {
+        try Self.deleteTokenAtKeyChain(tokenCase: tokenCase)
+    }
+    
+    static func saveTokenAtKeyChain(tokenCase: TokenCase, value: String) throws {
         guard let decodeValue = value.data(using: String.Encoding.utf8) else { throw KeychainError.unexpectedPasswordData }
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccount as String: tokenCase.tokenIdentifier,
@@ -17,14 +30,14 @@ final class DefaultTokenRepository: TokenRepository {
         let status = SecItemAdd(query as CFDictionary, nil)
         if status != errSecSuccess {
             if status == errSecDuplicateItem {
-                try updateTokenValue(tokenCase: tokenCase, value: value)
+                try updateTokenValueAtKeyChain(tokenCase: tokenCase, value: value)
             } else {
                 throw KeychainError.unhandledError(status: status)
             }
         }
     }
     
-    func readToken(tokenCase: TokenCase) throws -> String {
+    static func readTokenAtKeyChain(tokenCase: TokenCase) throws -> String {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccount as String: tokenCase.tokenIdentifier,
                                     kSecMatchLimit as String: kSecMatchLimitOne,
@@ -44,14 +57,14 @@ final class DefaultTokenRepository: TokenRepository {
         return data
     }
     
-    func deleteToken(tokenCase: TokenCase) throws {
+    static func deleteTokenAtKeyChain(tokenCase: TokenCase) throws {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccount as String: tokenCase.tokenIdentifier]
         let status = SecItemDelete(query as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else { throw KeychainError.unhandledError(status: status) }
     }
     
-    private func updateTokenValue(tokenCase: TokenCase, value: String) throws {
+    static private func updateTokenValueAtKeyChain(tokenCase: TokenCase, value: String) throws {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccount as String: tokenCase.tokenIdentifier]
         let convertValue = value.data(using: String.Encoding.utf8)!
