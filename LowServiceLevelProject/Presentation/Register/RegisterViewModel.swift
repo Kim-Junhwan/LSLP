@@ -63,6 +63,9 @@ final class RegisterViewModel: ObservableObject {
     func validateEmail() {
         isLoading = true
         repository.validateEmail(request: .init(email: email)) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+            }
             switch result {
             case .success(_):
                 self?.changeShowAlert(true, action: .validateEmail)

@@ -46,12 +46,7 @@ struct LoginView: View {
                 }
                 .errorAlert(error: $vm.currentError)
                 .onAppear {
-                    do {
-                        try KeychainService.shared.delete(key: KeychainAuthorizNameSpace.accesshToken)
-                        try KeychainService.shared.delete(key: KeychainAuthorizNameSpace.refreshToken)
-                    } catch {
-                        
-                    }
+                   
                 }
             }
             LoadingView(isShow: $vm.isLoading)
