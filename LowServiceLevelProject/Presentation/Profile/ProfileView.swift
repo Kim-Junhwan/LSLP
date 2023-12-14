@@ -10,6 +10,8 @@ import SwiftUI
 struct ProfileView: View {
     @State private var showOptionView: Bool = false
     @ObservedObject private var viewModel: ProfileViewModel
+    @EnvironmentObject var diContainer: AppDIContainer
+    
     let column: [GridItem] = [
         .init(.adaptive(minimum: 100))
     ]
@@ -32,8 +34,10 @@ struct ProfileView: View {
                         .toolbar {
                             ToolbarItem(placement: .topBarTrailing) {
                                 Menu {
-                                    Button("프로필 수정") {
-                                        
+                                    NavigationLink {
+                                        UpdateProfileView(viewModel: UpdateProfileViewModel(nick: viewModel.myProfile?.nick ?? ""))
+                                    } label: {
+                                        Text("프로필 수정")
                                     }
                                 } label: {
                                     Image(systemName: "ellipsis")
