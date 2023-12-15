@@ -14,6 +14,7 @@ struct ImagePicker: UIViewControllerRepresentable {
     
     @Binding var selectImage: Data?
     @Binding var currentError: Error?
+    var imageSize: Float
     
     func makeUIViewController(context: Context) -> some PHPickerViewController {
         let picker = PHPickerViewController(configuration: .init(photoLibrary: .shared()))
@@ -46,7 +47,7 @@ struct ImagePicker: UIViewControllerRepresentable {
                     } else {
                         guard let convertImage = image as? UIImage else { return }
                         DispatchQueue.main.async {
-                            self.parentView.selectImage = convertImage.jpegData(compressionQuality: 1.0)
+                            self.parentView.selectImage = convertImage.downSamplingImage(maxSize: CGFloat(self.parentView.imageSize)).jpegData(compressionQuality: 1.0)
                         }
                     }
                 }
