@@ -9,16 +9,32 @@ import Foundation
 import SwiftUI
 
 class UpdateProfileViewModel: ObservableObject {
+    
+    private let originNick: String
+    private let originPhoneNum: String?
+    private let originBirthDay: String?
+    
     @Published var nick: String
     @Published var phoneNum: String?
     @Published var birthDay: String?
-    @Published var profileImage: Data?
     @Published var currentError: Error?
+    
+    @Published var profileImage: Data?
+    var profileImageSize: Float {
+        return Float(profileImage?.count ?? 0) / 1024 / 1024
+    }
+    
+    var canUpdateProfile: Bool {
+        return (profileImageSize <= 1.0 || profileImageSize == 0.0) && (nick != originNick) && (phoneNum != originPhoneNum) && (birthDay != originBirthDay) && !nick.isEmpty
+    }
     
     init(nick: String, phoneNum: String? = nil, birthDay: String? = nil, profileImage: Data? = nil) {
         self.nick = nick
+        self.originNick = nick
         self.phoneNum = phoneNum
+        self.originPhoneNum = phoneNum
         self.birthDay = birthDay
+        self.originBirthDay = birthDay
         self.profileImage = profileImage
     }
 }
