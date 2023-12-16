@@ -37,9 +37,8 @@ struct UpdateProfileView: View {
                             .toolbar {
                                 ToolbarItem {
                                     Button("확인") {
-                                        
+                                        viewModel.editProfile()
                                     }
-                                    .disabled(!viewModel.canUpdateProfile)
                                 }
                         }
                         Text("이미지 크기: \(String(format: "%.2f", viewModel.profileImageSize))MB")
@@ -71,6 +70,4 @@ struct UpdateProfileView: View {
 
 
 
-#Preview {
-    UpdateProfileView(viewModel: UpdateProfileViewModel(nick: ""))
-}
+

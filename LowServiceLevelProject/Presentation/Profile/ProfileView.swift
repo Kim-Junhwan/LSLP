@@ -35,7 +35,7 @@ struct ProfileView: View {
                             ToolbarItem(placement: .topBarTrailing) {
                                 Menu {
                                     NavigationLink {
-                                        UpdateProfileView(viewModel: UpdateProfileViewModel(nick: viewModel.myProfile?.nick ?? ""))
+                                        UpdateProfileView(viewModel: UpdateProfileViewModel(nick: viewModel.myProfile?.nick ?? "", profileRepository: diContainer.getProfileRepository()))
                                     } label: {
                                         Text("프로필 수정")
                                     }
@@ -98,9 +98,10 @@ struct ProfileView: View {
 }
 
 class FakeProfileRepository: ProfileRepository {
-    func getMyProfile(completion: @escaping (Result<MyProfile, Error>) -> Void) {}
+    func editMyProfile(query: EditProfileQuery, completion: @escaping (Result<MyProfile, Error>) -> Void) {
+    }
     
-    func editMyProfile(completion: @escaping (Result<MyProfile, Error>) -> Void) {}
+    func getMyProfile(completion: @escaping (Result<MyProfile, Error>) -> Void) {}
 }
 
 #Preview {
