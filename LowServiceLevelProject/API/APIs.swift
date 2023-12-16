@@ -32,4 +32,8 @@ enum ProfileEndpoints {
     static func getMyProfile() -> EndPoint<MyProfileResponse> {
         return EndPoint(path: "profile/me", method: .GET, header: ["Authorization":try! DefaultTokenRepository.readTokenAtKeyChain(tokenCase: .accessToken)])
     }
+    
+    static func updateMyProfile(request: UpdateProfileRequestDTO) -> EndPoint<MyProfileResponse> {
+        return EndPoint(path: "profile/me", method: .PUT, header: ["Content-Type":"multipart/form-data", "Authorization":try! DefaultTokenRepository.readTokenAtKeyChain(tokenCase: .accessToken)], bodyParameter: request)
+    }
 }

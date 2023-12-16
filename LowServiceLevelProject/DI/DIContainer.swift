@@ -9,7 +9,7 @@ import Foundation
 
 class NetworkDIContainer: ObservableObject {
     lazy var defaultNetworkService: NetworkService = {
-        return DefaultNetworkService(config: APINetworkConfigs.authoTestConfig)
+        return DefaultNetworkService(config: APINetworkConfigs.registerConfig)
     }()
     
     lazy var defaultDataTransferService: DataTransferService = {
