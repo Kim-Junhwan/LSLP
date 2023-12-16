@@ -15,6 +15,7 @@ enum NetworkServiceError: Error {
 
 protocol NetworkService {
     func request(endPoint: Requestable ,completion: @escaping (Result<Data?, NetworkServiceError>) -> Void)
+    func upload(endPoint: Requestable, data: Data ,completion: @escaping (Result<Data?, NetworkServiceError>) -> Void)
 }
 
 final class DefaultNetworkService {
@@ -50,5 +51,28 @@ extension DefaultNetworkService: NetworkService {
         }
     }
     
+    func upload(endPoint: Requestable, data: Data ,completion: @escaping (Result<Data?, NetworkServiceError>) -> Void) {
+        do {
+            var request = try endPoint.makeURLRequest(networkConfig: config)
+            request.httpBody = 
+            URLSession.shared.uploadTask(with: request, from: data) { data, response, error in
+                if let error = error {
+                    completion(.failure(.networkError(error: error)))
+                } else {
+                    if let response = response as? HTTPURLResponse {
+                        if (200..<300) ~= response.statusCode {
+                            completion(.success(data))
+                        } else {
+                            completion(.failure(.responseError(statusCode: response.statusCode, data: data)))
+                        }
+                    }
+                    
+                }
+            }.resume()
+        } catch {
+            completion(.failure(.url))
+        }
+        
+    }
     
 }
