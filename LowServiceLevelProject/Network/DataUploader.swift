@@ -9,15 +9,15 @@ import Foundation
 
 protocol DataUploader {
     typealias identifierValue = String
-    func settingEndpoint(identifier: String, request: Requestable) -> Requestable
-    func convertDatas(identifier: String ,datas: [String:[Data]]) -> Data
+    func settingHeader(identifier: String, request: URLRequest) -> URLRequest
+    func createPostBody(identifier: String, bodyParameterData: [String: String], datas: [String:[Data]]) -> Data
 }
 
 extension DataUploader {
-    func settingEndpoint(identifier: String, request: Requestable) -> Requestable {
+    func settingHeader(identifier: String, request: URLRequest) -> URLRequest {
         var copyReq = request
         let contentType = "multipart/form-data; boundary=\(identifier)"
-        copyReq.headerParameter["Content-Type"] = contentType
+        copyReq.addValue(contentType, forHTTPHeaderField: "Content-Type")
         return copyReq
     }
 }
