@@ -31,11 +31,7 @@ extension DefaultProfileRepository: ProfileRepository {
     
     func editMyProfile(query: EditProfileQuery, completion: @escaping (Result<MyProfile, Error>) -> Void) {
         let dto = UpdateProfileRequestDTO(nick: query.nick, phoneNum: query.phoneNum, birthDay: query.birthDay)
-        var dataDict: [String:[Data]] = ["profile":[]]
-        if let imageData = query.profileImage {
-            dataDict["profile"] = [imageData]
-        }
-        dataTransferService.upload(endpoint: ProfileEndpoints.updateMyProfile(request: dto), datas: dataDict, uploader: ImageUploader(), endpointResponseHandler: EditProfileErrorHandler()) { result in
+        dataTransferService.request(endpoint: ProfileEndpoints.updateMyProfile(request: dto, image: query.profileImage), endpointResponseHandler: EditProfileErrorHandler()) { result in
             switch result {
             case .success(let success):
                 print(success)
