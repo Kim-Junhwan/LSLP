@@ -62,50 +62,6 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
         }
     }
     
-    func upload<T: Decodable, U: Networable>(endpoint: U, datas: [String: [Data]], uploader: DataUploader, endpointResponseHandler: (some ResponseErrorHandler)?, completion: @escaping (Result<U.responseType, Error>) -> Void) where T == U.responseType {
-        let identifier = UUID().uuidString
-        let settingEndpoint = uploader.settingEndpoint(identifier: identifier, request: endpoint)
-        let convertData = uploader.convertDatas(identifier: identifier, datas: datas)
-        //print(String(data: convertData, encoding: .utf8)!)
-        
-        let responseResultClosure: (RetryResult) -> Void = { result in
-            switch result {
-            case .notRetry(let error):
-                completion(.failure(error))
-            case .retry(let end, let maxCount):
-                self.request(count: 0, maxCount: maxCount, endpoint: end, endpointResponseHandler: endpointResponseHandler) { result in
-                    completion(result)
-                }
-            case .notRetryNotPass:
-                break
-            case .retryNotPass(endpoint: let endpoint, maxCount: let maxCount):
-                break
-            }
-        }
-        
-        networkService.upload(endPoint: settingEndpoint, data: convertData) { result in
-            switch result {
-            case .success(let data):
-                let fetchData: Result<U.responseType, Error> = self.decode(data: data)
-                completion(fetchData)
-            case .failure(let error):
-                switch error {
-                case .responseError(statusCode: let statusCode, data: _):
-                    if let defaultStatus = self.defaultResponseErrorHandler.mappingStatusCode(statusCode: statusCode) {
-                        defaultStatus.retry(endpoint: endpoint, completion: responseResultClosure)
-                        return
-                    } else {
-                        endpointResponseHandler?.mappingStatusCode(statusCode: statusCode)?.retry(endpoint: endpoint, completion: responseResultClosure)
-                    }
-                case .networkError(let netwokError):
-                    completion(.failure(netwokError))
-                case .url:
-                    completion(.failure(error))
-                }
-            }
-        }
-    }
-    
     func request<T: Decodable,U: Networable>(endpoint: U,completion: @escaping (Result<U.responseType, Error>) -> Void) where T == U.responseType{
         networkService.request(endPoint: endpoint) { result in
             switch result {
