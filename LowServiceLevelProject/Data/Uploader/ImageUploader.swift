@@ -8,18 +8,30 @@
 import Foundation
 
 struct ImageUploader: DataUploader {
+    func createPostBody(identifier: String, bodyParameterData: [String : String], datas: [String : [Data]]) -> Data {
+        let convertData = NSMutableData()
+        convertData.appendString("\r\n--\(identifier)\r\n")
+        for parameter in bodyParameterData {
+            convertData.appendString("Content-Disposition: form-data; name=\"\(parameter.key)\"\r\n\r\n")
+            convertData.appendString(parameter.value)
+        }
+        convertData.append(convertDatas(identifier: identifier, datas: datas))
+        convertData.appendString("--\(identifier)--\r\n")
+        return convertData as Data
+    }
+    
     func convertDatas(identifier: String, datas: [String : [Data]]) -> Data {
-        var convertData = NSMutableData()
+        let convertData = NSMutableData()
         for data in datas {
-            for detailData in data.value.enumerated() {
-                convertData.appendString("--\(identifier)\r\n")
-                convertData.appendString("Content-Disposition: form-data; name=\"\(data.key)\"; filename=\"\(data.key)\(detailData.offset).jpg\"\r\n")
+            for detailData in data.value {
+                convertData.appendString("\r\n--\(identifier)\r\n")
+                convertData.appendString("Content-Disposition: form-data; name=\"\(data.key)\"; filename=\"\(data.key)\(identifier).jpg\"\r\n")
                 convertData.appendString("Content-Type: image/jpeg\r\n\r\n")
-                convertData.append(detailData.element)
+                convertData.append(detailData)
                 convertData.appendString("\r\n")
-                convertData.appendString("--\(identifier)--\r\n")
             }
         }
+        
         return convertData as Data
     }
     
