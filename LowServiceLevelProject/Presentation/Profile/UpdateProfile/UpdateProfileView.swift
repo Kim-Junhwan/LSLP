@@ -67,7 +67,3 @@ struct UpdateProfileView: View {
         }
     }
 }
-
-
-
-

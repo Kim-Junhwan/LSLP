@@ -13,7 +13,7 @@ struct TabBar: View {
     
     var body: some View {
         TabView {
-            Text("안녕")
+            PostMapView()
                 .tabItem {
                     Image(systemName: "house")
                     Text("메인")
@@ -21,13 +21,9 @@ struct TabBar: View {
             
             ProfileView(viewModel: .init(repository: appDIConatiner.getProfileRepository()))
                 .tabItem {
-                    Image(systemName: "gear")
+                    Image(systemName: "person.fill")
                     Text("설정")
                 }
         }
     }
-}
-
-#Preview {
-    TabBar()
 }

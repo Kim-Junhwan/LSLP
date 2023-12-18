@@ -34,9 +34,9 @@ extension DefaultProfileRepository: ProfileRepository {
         dataTransferService.request(endpoint: ProfileEndpoints.updateMyProfile(request: dto, image: query.profileImage), endpointResponseHandler: EditProfileErrorHandler()) { result in
             switch result {
             case .success(let success):
-                print(success)
+                completion(.success(success.toDomain()))
             case .failure(let failure):
-                print(failure)
+                completion(.failure(failure))
             }
         }
     }
