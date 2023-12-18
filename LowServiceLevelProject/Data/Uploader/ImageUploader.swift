@@ -17,7 +17,7 @@ struct ImageUploader: DataUploader {
         }
         
         convertData.append(convertDatas(identifier: identifier, datas: datas))
-        convertData.appendString("--\(identifier)--\r\n")
+        convertData.appendString("\r\n--\(identifier)--\r\n")
         return convertData as Data
     }
     
