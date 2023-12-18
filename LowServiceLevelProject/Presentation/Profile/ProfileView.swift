@@ -20,13 +20,26 @@ struct ProfileView: View {
         self.viewModel = viewModel
     }
     
+    @ViewBuilder
+    var profileImage: some View {
+        if let profileImagePath = viewModel.myProfile?.profileImagePath {
+            CustomAsyncImage(path: profileImagePath) { iamge in
+                iamge.resizable()
+                    .scaledToFill()
+            } placeHolder: {
+                Image(systemName: "person")
+            }
+        } else {
+            Image(systemName: "person")
+                .resizable()
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading) {
                 HStack {
-                    Image(systemName: "person")
-                        .resizable()
-                        .scaledToFit()
+                    profileImage
                         .frame(width: 100, height: 100)
                         .background(.gray)
                         .foregroundStyle(.white)
@@ -43,8 +56,6 @@ struct ProfileView: View {
                                     Image(systemName: "ellipsis")
                                         .foregroundStyle(.gray)
                                 }
-                                
-                                
                             }
                             ToolbarItem(placement: .topBarTrailing) {
                                 NavigationLink(destination: OptionView()) {
@@ -74,6 +85,7 @@ struct ProfileView: View {
                 }
                 .frame(maxWidth: .infinity)
                 Text("\(viewModel.myProfile?.nick ?? "")")
+                Text("\(viewModel.myProfile?.profileImagePath ?? "")")
                 ScrollView {
                     LazyVGrid(columns: column) {
                         ForEach(viewModel.myProfile?.postsId ?? [], id: \.self) { i in
@@ -83,7 +95,6 @@ struct ProfileView: View {
                     }
                 }
             }
-            
             .padding()
         }
         .refreshable {
