@@ -16,15 +16,20 @@ struct CustomAsyncImage<Content: View, Placeholder: View>: View {
     let placeHolder: () -> Placeholder
     private let dataTransferSerivice = DataTransferService(networkService: DefaultNetworkService(config: APINetworkConfigs.registerConfig), defaultResponseHandler: CommonResponseErrorHandler())
     
-    var body: some View {
+    @ViewBuilder
+    var contentImage: some View {
         if let image {
             content(Image(uiImage: image))
         } else {
             placeHolder()
-                .task {
-                    getImage(path: path)
-                }
         }
+    }
+    
+    var body: some View {
+        contentImage
+            .onAppear {
+                getImage(path: path)
+            }
     }
     
     private func getImage(path: String?) {
