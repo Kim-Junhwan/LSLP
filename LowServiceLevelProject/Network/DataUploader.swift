@@ -8,7 +8,6 @@
 import Foundation
 
 protocol DataUploader {
-    typealias identifierValue = String
     func settingHeader(identifier: String, request: URLRequest) -> URLRequest
     func createPostBody(identifier: String, bodyParameterData: [String: String], datas: [String:[Data]]) -> Data
 }

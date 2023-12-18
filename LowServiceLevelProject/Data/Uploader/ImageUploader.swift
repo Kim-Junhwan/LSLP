@@ -10,11 +10,12 @@ import Foundation
 struct ImageUploader: DataUploader {
     func createPostBody(identifier: String, bodyParameterData: [String : String], datas: [String : [Data]]) -> Data {
         let convertData = NSMutableData()
-        convertData.appendString("\r\n--\(identifier)\r\n")
         for parameter in bodyParameterData {
+            convertData.appendString("\r\n--\(identifier)\r\n")
             convertData.appendString("Content-Disposition: form-data; name=\"\(parameter.key)\"\r\n\r\n")
             convertData.appendString(parameter.value)
         }
+        
         convertData.append(convertDatas(identifier: identifier, datas: datas))
         convertData.appendString("--\(identifier)--\r\n")
         return convertData as Data
