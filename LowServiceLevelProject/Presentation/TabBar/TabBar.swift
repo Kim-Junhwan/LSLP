@@ -13,7 +13,7 @@ struct TabBar: View {
     
     var body: some View {
         TabView {
-            PostMapView()
+            PostListView()
                 .tabItem {
                     Image(systemName: "house")
                     Text("메인")
