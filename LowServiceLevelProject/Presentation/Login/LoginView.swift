@@ -45,9 +45,6 @@ struct LoginView: View {
                     }
                 }
                 .errorAlert(error: $vm.currentError)
-                .onAppear {
-                   
-                }
             }
             LoadingView(isShow: $vm.isLoading)
                 .ignoresSafeArea()

@@ -37,14 +37,16 @@ class UserStateViewModel: ObservableObject {
         registeredRefreshToken()
         loginFlowUseCases.login(email: email, password: password) { error in
             if let error {
-                self.isLoading = false
-                self.currentError = error
-                self.isLoggedIn = false
-                return
-            }
-            DispatchQueue.main.async {
-                self.isLoading = false
-                self.isLoggedIn = true
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                    self.currentError = error
+                    self.isLoggedIn = false
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                    self.isLoggedIn = true
+                }
             }
         }
     }
