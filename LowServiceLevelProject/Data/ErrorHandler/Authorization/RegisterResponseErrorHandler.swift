@@ -13,14 +13,7 @@ struct RegisterResponseErrorHandler: ResponseErrorHandler {
         case alreadyJoinMember = 409
         
         func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
-            completion(.notRetry(error: self))
-        }
-        
-        var errorDescription: String? {
-            switch self {
-            case .alreadyJoinMember:
-                return "이미 가입된 회원입니다."
-            }
+            completion(.notRetry(title: "회원가입 실패", errorDecoding: .decoding(decoding: ErrorDesctiption.self)))
         }
     }
     

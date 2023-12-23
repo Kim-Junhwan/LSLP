@@ -13,7 +13,7 @@ struct LoginResponseErrorHandler: ResponseErrorHandler {
         case cannotLogin = 401
         
         func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
-            completion(.notRetry(error: self))
+            completion(.notRetry(title: "로그인 실패", errorDecoding: .decoding(decoding: ErrorDesctiption.self)))
         }
         
         var errorDescription: String? {

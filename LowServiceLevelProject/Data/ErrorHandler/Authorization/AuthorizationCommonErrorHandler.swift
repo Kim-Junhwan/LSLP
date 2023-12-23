@@ -16,14 +16,7 @@ struct AuthorizationCommonErrorHandler: ResponseErrorHandler {
         func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
             switch self {
             case .emptyRequireValue:
-                completion(.notRetry(error: self))
-            }
-        }
-        
-        var errorDescription: String? {
-            switch self {
-            case .emptyRequireValue:
-                return "필수값이 입력되지 않았습니다."
+                completion(.notRetry(title: "인증 실패", errorDecoding: .localized(description: "필수값이 누락되었습니다.")))
             }
         }
     }

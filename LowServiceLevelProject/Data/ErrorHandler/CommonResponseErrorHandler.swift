@@ -16,19 +16,15 @@ struct CommonResponseErrorHandler: ResponseErrorHandler {
         case serverError = 500
         
         func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
-            completion(.notRetry(error: self))
-        }
-        
-        var errorDescription: String? {
             switch self {
             case .secretKeyError:
-                return "옳바르지 않는 비밀키입니다."
+                completion(.notRetry(title: "에러", errorDecoding: .decoding(decoding: ErrorDesctiption.self)))
             case .tooMuchCall:
-                return "과호출되었습니다."
+                completion(.notRetry(title: "에러", errorDecoding: .decoding(decoding: ErrorDesctiption.self)))
             case .pathError:
-                return "옳바르지 않는 경로입니다."
+                completion(.notRetry(title: "에러", errorDecoding: .localized(description: "옳바르지 않는 경로입니다.")))
             case .serverError:
-                return "서버에 문제가 생겼습니다."
+                completion(.notRetry(title: "서버 에러", errorDecoding: .localized(description: "서버에 문제가 생겼습니다. 잠시 후 다시 시도해주십시오")))
             }
         }
     }

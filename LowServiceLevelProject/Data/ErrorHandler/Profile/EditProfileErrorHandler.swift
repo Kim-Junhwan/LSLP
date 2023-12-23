@@ -10,20 +10,14 @@ import Foundation
 struct EditProfileErrorHandler: ResponseErrorHandler {
     
     enum ResponseError: Int, ResponseErrorType {
+        
         case invalidRequest = 400
         
-        var errorDescription: String? {
-            switch self {
-            case .invalidRequest:
-                "알맞지 않는 파일 형식입니다"
-            }
+        func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
+            completion(.notRetry(title: "프로필 수정 실패", errorDecoding: .localized(description: "프로필 수정에 실패했습니다.")))
         }
         
-        func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
-            completion(.notRetry(error: self))
-        }
     }
-    
     
     func mappingStatusCode(statusCode: Int) -> ResponseErrorType? {
         if let response = TokenErrorHandler().mappingStatusCode(statusCode: statusCode) {

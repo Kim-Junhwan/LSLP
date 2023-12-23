@@ -13,10 +13,12 @@ struct TokenErrorHandler: ResponseErrorHandler {
         case expirationAccessToken = 419
         case forbidden = 403
         
-        func retry(endpoint: Requestable , completion: @escaping (RetryResult) -> Void) {
+        func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
             switch self {
-            case .unknownAccessToken, .forbidden:
-                completion(.notRetry(error: self))
+            case .unknownAccessToken:
+                completion(.notRetry(title: "에러", errorDecoding: .decoding(decoding: ErrorDesctiption.self)))
+            case .forbidden:
+                completion(.notRetry(title: "에러", errorDecoding: .localized(description: "접근 권한이 없습니다.")))
             case .expirationAccessToken:
                 let refreshEndpoint = TokenEndpoints.refreshAccessToken()
                 let dataTransferService = DataTransferService(networkService: DefaultNetworkService(config: APINetworkConfigs.authoTestConfig), defaultResponseHandler: CommonResponseErrorHandler())
@@ -26,13 +28,13 @@ struct TokenErrorHandler: ResponseErrorHandler {
                         var copyReq = endpoint
                         do {
                             try DefaultTokenRepository.saveTokenAtKeyChain(tokenCase: .accessToken, value: refreshToken.token)
+                            copyReq.headerParameter["Authorization"] = refreshToken.token
+                            completion(.retry(endpoint: endpoint, title: "토큰 갱신 실패", errorDecoding: .decoding(decoding: ErrorDesctiption.self)))
                         } catch {
-                            completion(.notRetry(error: error))
+                            completion(.notRetry(title: "실패", errorDecoding: .localized(description: "토큰을 저장 할 수 없습니다.")))
                         }
-                        copyReq.headerParameter["Authorization"] = refreshToken.token
-                        completion(.retry(endpoint: copyReq, maxCount: 1))
                     case .failure(let failure):
-                        completion(.notRetry(error: failure))
+                        completion(.notRetry(title: "실패", errorDecoding: .decoding(decoding: ErrorDesctiption.self)))
                     }
                 }
                 

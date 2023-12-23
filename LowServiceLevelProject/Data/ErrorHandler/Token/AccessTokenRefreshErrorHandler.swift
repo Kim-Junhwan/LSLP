@@ -7,6 +7,15 @@
 
 import Foundation
 
+struct ErrorDesctiption: DecodingErrorType {
+    
+    let message: String
+    
+    func description() -> String {
+        return message
+    }
+}
+
 struct AccessTokenRefreshErrorHandler: ResponseErrorHandler {
     enum ResponseError: Int, ResponseErrorType {
         case accessTokenIsValid = 409
@@ -22,12 +31,12 @@ struct AccessTokenRefreshErrorHandler: ResponseErrorHandler {
             }
         }
         
-        var errorDescription: String? {
+        var descriptionType: ErrorDecoding {
             switch self {
             case .accessTokenIsValid:
-                return "액세스 토큰이 옳바르지 않습니다."
+                return .decoding(decoding: ErrorDesctiption.self)
             case .expirationRefreshToken:
-                return "리프레시 토큰이 만료되었습니다."
+                return .localized(description: "123")
             }
         }
     }
