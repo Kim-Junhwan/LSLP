@@ -30,15 +30,6 @@ struct AccessTokenRefreshErrorHandler: ResponseErrorHandler {
                 completion(.notRetryNotPass)
             }
         }
-        
-        var descriptionType: ErrorDecoding {
-            switch self {
-            case .accessTokenIsValid:
-                return .decoding(decoding: ErrorDesctiption.self)
-            case .expirationRefreshToken:
-                return .localized(description: "123")
-            }
-        }
     }
     
     func mappingStatusCode(statusCode: Int) -> ResponseErrorType? {

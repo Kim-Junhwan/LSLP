@@ -34,7 +34,6 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
                                                 data: Data,
                                                 count: Int,
                                                 completion: @escaping (Result<T, NetworkError>) -> Void) {
-        print(#function)
         var responseError: ResponseErrorType?
         if let defaultStatus = defaultResponseErrorHandler.mappingStatusCode(statusCode: statusCode) {
             responseError = defaultStatus
@@ -42,7 +41,8 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
             responseError = endpointStatus
         }
         guard let responseError else {
-            completion(.failure(.init(title: "", description: "", originError: DataTransferServiceError.unknownStatusCode(statusCode: statusCode))))
+            let error = DataTransferServiceError.unknownStatusCode(statusCode: statusCode)
+            completion(.failure(.init(title: error.title, description: error.localizedDescription, originError: error)))
             return
         }
         responseError.retry(endpoint: endpoint, completion: { result in
@@ -52,8 +52,7 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
                 case .localized(description: let description):
                     completion(.failure(.init(title: title, description: description, originError: responseError)))
                 case .decoding(decoding: let decoding):
-                    let decodeDescription = try? self.jsonDecoder.decode(decoding, from: data)
-                    completion(.failure(.init(title: title, description: decodeDescription?.description() ?? "", originError: responseError)))
+                    completion(.failure(self.errorDecode(title: title, data: data, error: responseError, decodeType: decoding)))
                 }
             case .retry(let endpoint, let title, let errorDecoding, let maxCount):
                 if count >= maxCount {
@@ -61,8 +60,7 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
                     case .localized(description: let description):
                         completion(.failure(.init(title: title, description: description, originError: responseError)))
                     case .decoding(decoding: let decoding):
-                        let decodeDescription = try? self.jsonDecoder.decode(decoding, from: data)
-                        completion(.failure(.init(title: title, description: decodeDescription?.description() ?? "", originError: responseError)))
+                        completion(.failure(self.errorDecode(title: title, data: data, error: responseError, decodeType: decoding)))
                     }
                     return
                 }
@@ -141,6 +139,18 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
             let error = DataTransferServiceError.parsing(error: error)
             return .failure(.init(title: error.title, description: error.localizedDescription, originError: error))
         }
-        
+    }
+    
+    private func errorDecode(title: String, data: Data?, error: Error, decodeType: DecodingErrorType.Type) -> NetworkError {
+        guard let data = data else {
+            let error = DataTransferServiceError.noData
+            return .init(title: error.title, description: error.localizedDescription, originError: error) }
+        do {
+            let decoding = try jsonDecoder.decode(decodeType, from: data)
+            return .init(title: title, description: decoding.description(), originError: error)
+        } catch {
+            let error = DataTransferServiceError.parsing(error: error)
+            return .init(title: error.title, description: error.localizedDescription, originError: error)
+        }
     }
 }

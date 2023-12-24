@@ -11,7 +11,7 @@ enum RetryResult {
     case notRetry(title: String, errorDecoding: ErrorDecoding)
     case retry(endpoint: Requestable, title: String, errorDecoding: ErrorDecoding, maxCount: Int = 1)
     case notRetryNotPass
-    case retryNotPass
+    case retryNotPass(endpoint: Requestable, maxCount: Int = 1)
 }
 
 enum ErrorDecoding {

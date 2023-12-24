@@ -11,6 +11,10 @@ enum NetworkServiceError: Error {
     case responseError(statusCode: Int, data: Data?)
     case networkError(error: Error)
     case url
+    
+    var title: String {
+        return "네트워크 에러"
+    }
 }
 
 protocol NetworkService {

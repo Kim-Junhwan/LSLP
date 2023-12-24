@@ -14,8 +14,7 @@ struct ValidateEmailResponseErrorHandler: ResponseErrorHandler {
         case notValidEmail = 409
         
         func retry(endpoint: Requestable, completion: @escaping (RetryResult) -> Void) {
-            completion(.retry(endpoint: endpoint, title: "사용할 수 없는 이메일입니다.", errorDecoding: .decoding(decoding: ErrorDesctiption.self), maxCount: 1))
-            //completion(.notRetry(title: "사용할 수 없는 이메일입니다.", errorDecoding: .decoding(decoding: ErrorDesctiption.self)))
+            completion(.notRetry(title: "사용할 수 없는 이메일입니다.", errorDecoding: .decoding(decoding: ErrorDesctiption.self)))
         }
     }
     
