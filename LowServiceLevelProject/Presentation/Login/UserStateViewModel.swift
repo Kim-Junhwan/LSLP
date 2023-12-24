@@ -12,7 +12,7 @@ import Combine
 class UserStateViewModel: ObservableObject {
     
     @Published var isLoggedIn = false
-    @Published var currentError: Error?
+    @Published var currentError: NetworkError?
     @Published var isLoading: Bool = false
     @Published var refreshTokenExpireAlert: Bool = false
     
@@ -57,7 +57,7 @@ class UserStateViewModel: ObservableObject {
             try loginFlowUseCases.logout()
             isLoggedIn = false
         } catch {
-            currentError = error
+            currentError = .init(title: "", description: "", originError: error)
         }
     }
 }

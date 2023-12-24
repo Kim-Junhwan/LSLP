@@ -8,9 +8,9 @@
 import Foundation
 
 protocol AuthorizationRepository {
-    func register(request: RegisterRequestDTO, completion: @escaping(Result<EmptyResponse,Error>) -> Void)
-    func validateEmail(request: ValidateEmailRequest, completion: @escaping(Result<EmptyResponse,Error>) -> Void)
-    func login(request: LoginRequest, completion: @escaping (Result<LoginSuccessResponse, Error>) -> Void)
+    func register(request: RegisterRequestDTO, completion: @escaping(Result<EmptyResponse,NetworkError>) -> Void)
+    func validateEmail(request: ValidateEmailRequest, completion: @escaping(Result<EmptyResponse,NetworkError>) -> Void)
+    func login(request: LoginRequest, completion: @escaping (Result<LoginSuccessResponse, NetworkError>) -> Void)
 }
 
 protocol TokenRepository {

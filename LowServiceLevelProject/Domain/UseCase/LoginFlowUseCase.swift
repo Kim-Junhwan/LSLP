@@ -8,7 +8,7 @@
 import Foundation
 
 protocol LoginFlowUseCase {
-    func login(email: String, password: String, completion: @escaping (Error?) -> Void)
+    func login(email: String, password: String, completion: @escaping (NetworkError?) -> Void)
     func logout() throws
 }
 
@@ -24,7 +24,7 @@ final class DefaultLoginFlowUseCase {
 
 extension DefaultLoginFlowUseCase: LoginFlowUseCase {
     
-    func login(email: String, password: String, completion: @escaping (Error?) -> Void) {
+    func login(email: String, password: String, completion: @escaping (NetworkError?) -> Void) {
         loginRepository.login(request: .init(email: email, password: password)) { [weak self] result in
             switch result {
             case .success(let success):
@@ -33,7 +33,7 @@ extension DefaultLoginFlowUseCase: LoginFlowUseCase {
                     try self?.tokenRepository.saveToken(tokenCase: .refreshToken, value: success.refreshToken)
                     completion(nil)
                 } catch {
-                    completion(error)
+                    completion(.init(title: "", description: "", originError: error))
                 }
             case .failure(let failure):
                 completion(failure)

@@ -43,7 +43,7 @@ final class RegisterViewModel: ObservableObject {
     
     @Published var currentAction: CurrentAction?
     @Published var showAlert: Bool = false
-    @Published var currentError: Error?
+    @Published var currentError: NetworkError?
     
     var successRegister: Bool = false
     
@@ -82,7 +82,7 @@ final class RegisterViewModel: ObservableObject {
         }
     }
     
-    private func changeError(error: Error) {
+    private func changeError(error: NetworkError) {
         DispatchQueue.main.async {
             self.currentError = error
         }
