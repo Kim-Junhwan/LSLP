@@ -11,7 +11,6 @@ import SwiftUI
 struct LowServiceLevelProjectApp: App {
     
     @StateObject var appDIContainer = AppDIContainer()
-    @StateObject var keyboardHeightHelper = KeyboardHeightHelper()
     
     var body: some Scene {
         WindowGroup {
@@ -20,7 +19,6 @@ struct LowServiceLevelProjectApp: App {
             }
             .environmentObject(appDIContainer.getUserStateViewModel())
             .environmentObject(appDIContainer)
-            .environmentObject(keyboardHeightHelper)
         }
     }
 }
