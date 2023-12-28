@@ -46,9 +46,6 @@ struct PostWriteView: View {
                     .bold()
                 }
             }
-            .onTapGesture {
-                isFocus = false
-            }
             Spacer()
         }
     }
