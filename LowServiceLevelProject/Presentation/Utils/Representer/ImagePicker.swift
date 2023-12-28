@@ -12,12 +12,23 @@ import PhotosUI
 
 struct ImagePicker: UIViewControllerRepresentable {
     
-    @Binding var selectImage: Data?
+    @Binding var selectImage: [Data]
     @Binding var currentError: Error?
     var imageSize: Float
+    let selectionLimit: Int
+    
+    init(selectImage: Binding<[Data]>, currentError: Binding<Error?>, imageSize: Float, selectionLimit: Int = 1) {
+        self._selectImage = selectImage
+        self._currentError = currentError
+        self.imageSize = imageSize
+        self.selectionLimit = selectionLimit
+    }
     
     func makeUIViewController(context: Context) -> some PHPickerViewController {
-        let picker = PHPickerViewController(configuration: .init(photoLibrary: .shared()))
+        var config = PHPickerConfiguration(photoLibrary: .shared())
+        config.filter = .images
+        config.selectionLimit = selectionLimit
+        let picker = PHPickerViewController(configuration: config)
         picker.delegate = context.coordinator
         return picker
     }
@@ -45,9 +56,9 @@ struct ImagePicker: UIViewControllerRepresentable {
                     if let error {
                         self.parentView.currentError = error
                     } else {
-                        guard let convertImage = image as? UIImage else { return }
+                        guard let convertImage = image as? UIImage, let imageData = convertImage.downSamplingImage(maxSize: CGFloat(self.parentView.imageSize)).jpegData(compressionQuality: 1.0) else { return }
                         DispatchQueue.main.async {
-                            self.parentView.selectImage = convertImage.downSamplingImage(maxSize: CGFloat(self.parentView.imageSize)).jpegData(compressionQuality: 1.0)
+                            self.parentView.selectImage.append(imageData) 
                         }
                     }
                 }

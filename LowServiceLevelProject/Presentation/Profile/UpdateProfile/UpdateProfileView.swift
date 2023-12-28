@@ -13,7 +13,7 @@ struct UpdateProfileView: View {
     @State var showImagePicker: Bool = false
     
     var profileImage: Image {
-        if let profileImageData = viewModel.profileImage {
+        if let profileImageData = viewModel.profileImage.first {
             return Image(uiImage: (.init(data: profileImageData) ?? UIImage(systemName: "person"))!)
         } else {
             return Image(systemName: "person")

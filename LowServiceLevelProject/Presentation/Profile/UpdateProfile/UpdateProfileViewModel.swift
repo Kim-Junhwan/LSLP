@@ -19,12 +19,12 @@ class UpdateProfileViewModel: ObservableObject {
     @Published var birthDay: String?
     @Published var currentError: Error?
     
-    @Published var profileImage: Data?
+    @Published var profileImage: [Data] = []
     
     let repository: ProfileRepository
     
     var profileImageSize: Float {
-        return Float(profileImage?.count ?? 0) / 1024 / 1024
+        return Float(profileImage.first?.count ?? 0) / 1024 / 1024
     }
     
     var canUpdateProfile: Bool {
@@ -38,13 +38,14 @@ class UpdateProfileViewModel: ObservableObject {
         self.originPhoneNum = phoneNum
         self.birthDay = birthDay
         self.originBirthDay = birthDay
-        self.profileImage = profileImage
         self.repository = profileRepository
+        if let safeImage = profileImage {
+            self.profileImage.append(safeImage)
+        }
     }
     
     func editProfile() {
-        repository.editMyProfile(query: .init(nick: nick, phoneNum: phoneNum, birthDay: birthDay, profileImage: profileImage)) { result in
-            
+        repository.editMyProfile(query: .init(nick: nick, phoneNum: phoneNum, birthDay: birthDay, profileImage: profileImage.first)) { result in
         }
     }
 }
