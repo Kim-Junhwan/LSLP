@@ -12,6 +12,7 @@ struct PostWriteView: View {
     @State private var textFieldFirstResponder = true
     @StateObject var viewModel: PostWriteViewModel = .init()
     @FocusState private var isFocus: Bool
+    @EnvironmentObject var keyboardHelper: KeyboardHeightHelper
     
     var body: some View {
         NavigationStack {
