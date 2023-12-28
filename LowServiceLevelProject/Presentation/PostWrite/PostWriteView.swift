@@ -12,7 +12,7 @@ struct PostWriteView: View {
     @State private var textFieldFirstResponder = true
     @StateObject var viewModel: PostWriteViewModel = .init()
     @FocusState private var isFocus: Bool
-    @EnvironmentObject var keyboardHelper: KeyboardHeightHelper
+    @State private var showImagePicker: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -48,7 +48,29 @@ struct PostWriteView: View {
                 }
             }
             Spacer()
+            HStack {
+                Button {
+                    showImagePicker = true
+                } label: {
+                    Image(systemName: "camera")
+                }
+                .padding()
+                Spacer()
+            }
         }
+        .sheet(isPresented: $showImagePicker, content: {
+            if #available(iOS 17.0, *) {
+                ImagePicker(selectImage: $viewModel.imageList, currentError: $viewModel.currentError, imageSize: 100)
+            } else {
+                VStack {
+                    RoundedRectangle(cornerRadius: 8).fill(Color.gray)
+                                    .frame(width: 60, height: 8)
+                                    .padding(.top, 8)
+                                    .padding(.bottom, 8)
+                    ImagePicker(selectImage: $viewModel.imageList, currentError: $viewModel.currentError, imageSize: 100)
+                }
+            }
+        })
     }
 }
 

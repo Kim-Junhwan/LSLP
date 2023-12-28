@@ -9,4 +9,6 @@ import Foundation
 
 final class PostWriteViewModel: ObservableObject {
     @Published var content: String = ""
+    @Published var imageList: [Data] = []
+    @Published var currentError: Error?
 }
