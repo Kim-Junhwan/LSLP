@@ -9,32 +9,60 @@ import SwiftUI
 
 struct PostWriteView: View {
     
-    @State private var textFieldFirstResponder = true
     @StateObject var viewModel: PostWriteViewModel = .init()
     @FocusState private var isFocus: Bool
     @State private var showImagePicker: Bool = false
+    @Binding var isPresented: Bool
+    
+    var selectedImageLazyView: some View {
+        ScrollView(.horizontal) {
+            LazyHStack(content: {
+                ForEach(1...10, id: \.self) { count in
+                    Text("Placeholder \(count)")
+                }
+            })
+        }
+    }
     
     var body: some View {
         NavigationStack {
-            HStack(alignment: .top) {
-                Image(systemName: "person")
-                    .resizable()
-                    .scaledToFill()
-                    .clipShape(Circle())
-                    .frame(width: 30, height: 30)
-                    .padding(.top, 5)
-                Spacer(minLength: 20)
-                CustomTextView(text: $viewModel.content, placeholder: "무슨 일이 일어나고 있나요?", placeholderColor: .gray)
-                    .frame(minHeight: 30.0 ,maxHeight: .infinity)
-                    .focused($isFocus)
+            VStack {
+                VStack {
+                    HStack (alignment: .top) {
+                        Image(systemName: "person")
+                            .resizable()
+                            .scaledToFill()
+                            .clipShape(Circle())
+                            .frame(width: 30, height: 30)
+                            .padding(.top, 5)
+                        Spacer(minLength: 20)
+                        CustomTextView(text: $viewModel.content, placeholder: "무슨 일이 일어나고 있나요?", placeholderColor: .gray)
+                            .frame(maxWidth: .infinity, minHeight: 30)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .focused($isFocus)
+                    }
+                    .padding()
+                    .navigationTitle("게시글 작성")
+                    .navigationBarTitleDisplayMode(.inline)
+                    selectedImageLazyView
+                        .frame(height: 150)
+                        .ignoresSafeArea(.keyboard)
+                }
+                Spacer()
+                HStack {
+                    Button {
+                        showImagePicker = true
+                    } label: {
+                        Image(systemName: "camera")
+                    }
+                    .padding()
+                    Spacer()
+                }
             }
-            .padding()
-            .navigationTitle("게시글 작성")
-            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("취소") {
-                        
+                        isPresented = false
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -47,15 +75,8 @@ struct PostWriteView: View {
                     .bold()
                 }
             }
-            Spacer()
-            HStack {
-                Button {
-                    showImagePicker = true
-                } label: {
-                    Image(systemName: "camera")
-                }
-                .padding()
-                Spacer()
+            .onTapGesture {
+                isFocus = false
             }
         }
         .sheet(isPresented: $showImagePicker, content: {
@@ -64,9 +85,9 @@ struct PostWriteView: View {
             } else {
                 VStack {
                     RoundedRectangle(cornerRadius: 8).fill(Color.gray)
-                                    .frame(width: 60, height: 8)
-                                    .padding(.top, 8)
-                                    .padding(.bottom, 8)
+                        .frame(width: 60, height: 8)
+                        .padding(.top, 8)
+                        .padding(.bottom, 8)
                     ImagePicker(selectImage: $viewModel.imageList, currentError: $viewModel.currentError, imageSize: 100)
                 }
             }
@@ -75,5 +96,5 @@ struct PostWriteView: View {
 }
 
 #Preview {
-    PostWriteView()
+    PostWriteView(isPresented: .constant(true))
 }

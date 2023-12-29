@@ -31,7 +31,7 @@ struct PostListView: View {
                 }
             }
             .fullScreenCover(isPresented: $showWriteCommentView, content: {
-                PostWriteView()
+                PostWriteView(isPresented: $showWriteCommentView)
             })
         }
     }
