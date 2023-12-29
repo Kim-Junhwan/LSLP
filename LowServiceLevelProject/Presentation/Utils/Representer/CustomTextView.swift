@@ -20,6 +20,8 @@ struct CustomTextView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
+        textView.isScrollEnabled = false
+        textView.sizeToFit()
         if let placeholder {
             textView.text = placeholder
             textView.textColor = placeholderColor
