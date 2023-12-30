@@ -141,7 +141,7 @@ final class DataTransferService<DefaultErrorHandler: ResponseErrorHandler> {
         }
     }
     
-    private func errorDecode(title: String, data: Data?, error: Error, decodeType: DecodingErrorType.Type) -> NetworkError {
+    private func errorDecode(title: String?, data: Data?, error: Error, decodeType: DecodingErrorType.Type) -> NetworkError {
         guard let data = data else {
             let error = DataTransferServiceError.noData
             return .init(title: error.title, description: error.localizedDescription, originError: error) }

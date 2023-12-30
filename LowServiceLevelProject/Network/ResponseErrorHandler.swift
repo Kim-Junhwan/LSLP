@@ -8,8 +8,8 @@
 import Foundation
 
 enum RetryResult {
-    case notRetry(title: String, errorDecoding: ErrorDecoding)
-    case retry(endpoint: Requestable, title: String, errorDecoding: ErrorDecoding, maxCount: Int = 1)
+    case notRetry(title: String? = nil, errorDecoding: ErrorDecoding)
+    case retry(endpoint: Requestable, title: String? = nil, errorDecoding: ErrorDecoding, maxCount: Int = 1)
     case notRetryNotPass
     case retryNotPass(endpoint: Requestable, maxCount: Int = 1)
 }
