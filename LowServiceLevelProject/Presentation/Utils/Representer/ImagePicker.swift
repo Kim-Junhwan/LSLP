@@ -15,13 +15,15 @@ struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectImage: [Data]
     @Binding var currentError: Error?
     var imageSize: Float
+    var standard: UIImage.Standard
     let selectionLimit: Int
     
-    init(selectImage: Binding<[Data]>, currentError: Binding<Error?>, imageSize: Float, selectionLimit: Int = 1) {
+    init(selectImage: Binding<[Data]>, currentError: Binding<Error?>, imageSize: Float, standard: UIImage.Standard,selectionLimit: Int = 1) {
         self._selectImage = selectImage
         self._currentError = currentError
         self.imageSize = imageSize
         self.selectionLimit = selectionLimit
+        self.standard = standard
     }
     
     func makeUIViewController(context: Context) -> some PHPickerViewController {
@@ -56,7 +58,9 @@ struct ImagePicker: UIViewControllerRepresentable {
                     if let error {
                         self.parentView.currentError = error
                     } else {
-                        guard let convertImage = image as? UIImage, let imageData = convertImage.downSamplingImage(maxSize: CGFloat(self.parentView.imageSize)).jpegData(compressionQuality: 1.0) else { return }
+                        guard let convertImage = image as? UIImage else { return }
+                        let imageMaxPixelSize = max(convertImage.size.width, convertImage.size.height)
+                        guard let imageData = convertImage.downSamplingImage(maxSize: CGFloat(self.parentView.imageSize), standard: self.parentView.standard).jpegData(compressionQuality: 1.0) else { return }
                         DispatchQueue.main.async {
                             self.parentView.selectImage.append(imageData) 
                         }

@@ -9,13 +9,20 @@ import Foundation
 import UIKit
 
 extension UIImage {
-    func downSamplingImage(maxSize:CGFloat) -> UIImage {
+    
+    enum Standard {
+        case height
+        case width
+    }
+    
+    func downSamplingImage(maxSize:CGFloat, standard: Standard) -> UIImage {
         let sourceOptions = [kCGImageSourceShouldCache:false] as CFDictionary
         guard let data = self.pngData() else { return self }
         guard let source = CGImageSourceCreateWithData(data as CFData, sourceOptions) else { return self }
+        let maxDimensionPixels = max(self.size.height, self.size.width) * maxSize
         let downsampleOptions = [
             kCGImageSourceCreateThumbnailFromImageAlways:true,
-            kCGImageSourceThumbnailMaxPixelSize: maxSize * UIScreen.main.scale ,
+            kCGImageSourceThumbnailMaxPixelSize: maxDimensionPixels,
             kCGImageSourceShouldCacheImmediately:true,
             kCGImageSourceCreateThumbnailWithTransform:true
         ] as CFDictionary
