@@ -53,14 +53,14 @@ struct UpdateProfileView: View {
             }
             .sheet(isPresented: $showImagePicker, content: {
                 if #available(iOS 17.0, *) {
-                    ImagePicker(selectImage: $viewModel.profileImage, currentError: $viewModel.currentError, imageSize: 150)
+                    ImagePicker(selectImage: $viewModel.profileImage, currentError: $viewModel.currentError, imageSize: 150, standard: .height)
                 } else {
                     VStack {
                         RoundedRectangle(cornerRadius: 8).fill(Color.gray)
                                         .frame(width: 60, height: 8)
                                         .padding(.top, 8)
                                         .padding(.bottom, 8)
-                        ImagePicker(selectImage: $viewModel.profileImage, currentError: $viewModel.currentError, imageSize: 150)
+                        ImagePicker(selectImage: $viewModel.profileImage, currentError: $viewModel.currentError, imageSize: 150, standard: .height)
                     }
                 }
             })
