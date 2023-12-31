@@ -16,7 +16,30 @@ enum HTTPMethodType: String {
 
 enum HTTPContentType {
     case json
-    case multipart(identifier: String, data: [String: [Data]], uploader: DataUploader)
+    case multipart(boundaryValue: String, data: [String: [Data]], uploadDataType: UploadDataType)
+}
+
+enum UploadDataType {
+    case jpeg
+    case png
+    
+    var contentType: String {
+        switch self {
+        case .jpeg:
+            return "image/jpeg"
+        case .png:
+            return "image/png"
+        }
+    }
+    
+    var fileExtension: String {
+        switch self {
+        case .jpeg:
+            return "jpg"
+        case .png:
+            return "png"
+        }
+    }
 }
 
 protocol Requestable {
@@ -52,30 +75,67 @@ extension Requestable {
         if let bodyParameter {
             let body = try JSONEncoder().encode(bodyParameter)
             if let contentType {
+                request = settingContentTypeHeader(urlrequest: request, contentType: contentType)
                 request = try makeBody(request: request, bodyParameterData: body, contentType: contentType)
             } else {
                 request.httpBody = body
             }
         }
-        
         return request
+    }
+    
+    func settingContentTypeHeader(urlrequest: URLRequest ,contentType: HTTPContentType) -> URLRequest {
+        var cpRequest = urlrequest
+        switch contentType {
+        case .json:
+            cpRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        case .multipart(let identifier, _, _):
+            let contentType = "multipart/form-data; boundary=\(identifier)"
+            cpRequest.addValue(contentType, forHTTPHeaderField: "Content-Type")
+        }
+        return cpRequest
     }
     
     private func makeBody(request: URLRequest, bodyParameterData: Data ,contentType: HTTPContentType) throws -> URLRequest {
         var cpRequest = request
         switch contentType {
         case .json:
-            cpRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
             cpRequest.httpBody = bodyParameterData
-        case .multipart(identifier: let identifier, data: let data, uploader: let uploader):
-            cpRequest = uploader.settingHeader(identifier: identifier, request: cpRequest)
+        case .multipart(boundaryValue: let boundaryValue, data: let data, let uploadType):
             guard let bodyParameterDict = try JSONSerialization.jsonObject(with: bodyParameterData) as? [String: Any] else {
                 return cpRequest
             }
             let strBodyDict = bodyParameterDict.mapValues { String(describing: $0) }
-            cpRequest.httpBody = uploader.createPostBody(identifier: identifier, bodyParameterData: strBodyDict, datas: data)
+            cpRequest.httpBody = createMultipartBody(boundaryValue: boundaryValue, bodyParameterData: strBodyDict, datas: data, type: uploadType)
         }
         return cpRequest
+    }
+    
+    private func createMultipartBody(boundaryValue: String, bodyParameterData: [String : String], datas: [String : [Data]], type: UploadDataType) -> Data {
+        let convertData = NSMutableData()
+        for parameter in bodyParameterData {
+            convertData.appendString("\r\n--\(boundaryValue)\r\n")
+            convertData.appendString("Content-Disposition: form-data; name=\"\(parameter.key)\"\r\n\r\n")
+            convertData.appendString(parameter.value)
+        }
+        convertData.append(convertDatas(boundaryValue: boundaryValue, datas: datas, type: type))
+        convertData.appendString("\r\n--\(boundaryValue)--\r\n")
+        return convertData as Data
+    }
+    
+    private func convertDatas(boundaryValue: String, datas: [String : [Data]], type: UploadDataType) -> Data {
+        let convertData = NSMutableData()
+        for data in datas {
+            for detailData in data.value {
+                convertData.appendString("\r\n--\(boundaryValue)\r\n")
+                convertData.appendString("Content-Disposition: form-data; name=\"\(data.key)\"; filename=\"\(data.key)\(boundaryValue).\(type.fileExtension)\"\r\n")
+                convertData.appendString("Content-Type: \(type.contentType)\r\n\r\n")
+                convertData.append(detailData)
+                convertData.appendString("\r\n")
+            }
+        }
+        
+        return convertData as Data
     }
 }
 
@@ -120,3 +180,12 @@ struct EndPoint<T>: Networable where T: Decodable{
         self.contentType = contentType
     }
 }
+
+extension NSMutableData {
+    func appendString(_ string: String) {
+        if let data = string.data(using: .utf8) {
+            self.append(data)
+        }
+    }
+}
+
