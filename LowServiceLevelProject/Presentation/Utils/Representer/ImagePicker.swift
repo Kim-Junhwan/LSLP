@@ -52,17 +52,18 @@ struct ImagePicker: UIViewControllerRepresentable {
         
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
             picker.dismiss(animated: true)
-            guard let selectImageProvider = results.first?.itemProvider else { return }
-            if selectImageProvider.canLoadObject(ofClass: UIImage.self) {
-                selectImageProvider.loadObject(ofClass: UIImage.self) { image, error in
-                    if let error {
-                        self.parentView.currentError = error
-                    } else {
-                        guard let convertImage = image as? UIImage else { return }
-                        let imageMaxPixelSize = max(convertImage.size.width, convertImage.size.height)
-                        guard let imageData = convertImage.downSamplingImage(maxSize: CGFloat(self.parentView.imageSize), standard: self.parentView.standard).jpegData(compressionQuality: 1.0) else { return }
-                        DispatchQueue.main.async {
-                            self.parentView.selectImage.append(imageData) 
+            for resultImage in results {
+                let selectImageProvider = resultImage.itemProvider
+                if selectImageProvider.canLoadObject(ofClass: UIImage.self) {
+                    selectImageProvider.loadObject(ofClass: UIImage.self) { image, error in
+                        if let error {
+                            self.parentView.currentError = error
+                        } else {
+                            guard let convertImage = image as? UIImage else { return }
+                            guard let imageData = convertImage.downSamplingImage(maxSize: CGFloat(self.parentView.imageSize), standard: self.parentView.standard).jpegData(compressionQuality: 1.0) else { return }
+                            DispatchQueue.main.async {
+                                self.parentView.selectImage.append(imageData)
+                            }
                         }
                     }
                 }

@@ -10,6 +10,8 @@ import SwiftUI
 struct SelectImageView: View {
     
     @Binding var imageData: Data
+    var imageIndex: Int
+    var action: (Int) -> ()
     
     var imageView: some View {
         if let image = UIImage(data: imageData) {
@@ -26,7 +28,7 @@ struct SelectImageView: View {
                 .scaledToFill()
                 .overlay {
                     Button (action: {
-                        
+                        action(imageIndex)
                     }, label: {
                         Image(systemName: "xmark")
                     })
@@ -36,6 +38,6 @@ struct SelectImageView: View {
     }
 }
 
-#Preview {
-    SelectImageView(imageData: .constant(Data()))
-}
+//#Preview {
+//    SelectImageView(imageData: .constant(Data()))
+//}

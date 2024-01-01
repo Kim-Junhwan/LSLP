@@ -18,11 +18,14 @@ struct PostWriteView: View {
     var selectedImageLazyView: some View {
         ScrollView(.horizontal) {
             LazyHStack(content: {
-                ForEach($viewModel.imageList, id: \.self) { image in
-                    SelectImageView(imageData: image)
+                ForEach(0..<$viewModel.imageList.count, id: \.self) { imageNumber in
+                    SelectImageView(imageData: $viewModel.imageList[imageNumber], imageIndex: imageNumber) { imageIndex in
+                        viewModel.imageList.remove(at: imageIndex)
+                    }
                 }
             })
         }
+        .scrollIndicators(.hidden)
     }
     
     var body: some View {
@@ -62,6 +65,7 @@ struct PostWriteView: View {
                         } label: {
                             Image(systemName: "camera")
                         }
+                        .disabled(viewModel.imageList.count >= 5)
                         .padding()
                         Spacer()
                     }
@@ -76,7 +80,7 @@ struct PostWriteView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("게시하기") {
-                        
+                        viewModel.postContent()
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.blue)
@@ -90,14 +94,14 @@ struct PostWriteView: View {
         }
         .sheet(isPresented: $showImagePicker, content: {
             if #available(iOS 17.0, *) {
-                ImagePicker(selectImage: $viewModel.imageList, currentError: $viewModel.currentError, imageSize: 150, standard: .height)
+                ImagePicker(selectImage: $viewModel.imageList, currentError: $viewModel.currentError, imageSize: 150, standard: .height, selectionLimit: 5 - viewModel.imageList.count)
             } else {
                 VStack {
                     RoundedRectangle(cornerRadius: 8).fill(Color.gray)
                         .frame(width: 60, height: 8)
                         .padding(.top, 8)
                         .padding(.bottom, 8)
-                    ImagePicker(selectImage: $viewModel.imageList, currentError: $viewModel.currentError, imageSize: 150, standard: .height)
+                    ImagePicker(selectImage: $viewModel.imageList, currentError: $viewModel.currentError, imageSize: 150, standard: .height, selectionLimit: 5 - viewModel.imageList.count)
                 }
             }
         })
