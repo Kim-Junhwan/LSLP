@@ -38,9 +38,12 @@ enum ProfileEndpoints {
         if let image {
             dataDict["profile"] = [image]
         }
-        return EndPoint(path: "profile/me", method: .PUT,contentType: .multipart(identifier: UUID().uuidString, data: dataDict, uploader: ImageUploader()) , header: ["Authorization":try! DefaultTokenRepository.readTokenAtKeyChain(tokenCase: .accessToken)], bodyParameter: request)
+        return EndPoint(path: "profile/me", method: .PUT,contentType: .multipart(boundaryValue: UUID().uuidString, data: dataDict, uploadDataType: .jpeg) , header: ["Authorization":try! DefaultTokenRepository.readTokenAtKeyChain(tokenCase: .accessToken)], bodyParameter: request)
     }
 }
 
-enum ImageEndpoints {
+enum PostEndpoints {
+    static func postContent(request: WriteContentRequestDTO, image: [Data]) -> EndPoint<WriteContentResponseDTO> {
+        return EndPoint(path: "post", method: .POST, contentType: .multipart(boundaryValue: UUID().uuidString, data: ["file": image], uploadDataType: .jpeg))
+    }
 }
